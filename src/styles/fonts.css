@@ -1,0 +1,24 @@
+/*
+ * Drop the real pixel fonts into /public/fonts/ then these @font-face rules
+ * pick them up. Until then the monospace/cursive fallbacks keep things readable.
+ *
+ * Recommended (personal / non-commercial use, credit Toby Fox):
+ *   PixelMono  -> "Determination Mono" or "8bitoperator" (main shop text)
+ *   FancyOldEn -> a blackletter/serif for Rouxls' "Buyeth" flavour text
+ */
+
+@font-face {
+  font-family: "PixelMono";
+  src: url("/fonts/pixelmono.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FancyOldEn";
+  src: url("/fonts/fancyolden.woff2") format("woff2");
+  font-display: swap;
+}
+
+.font-fancy {
+  font-family: "FancyOldEn", "PixelMono", serif;
+}

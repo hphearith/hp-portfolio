@@ -1,0 +1,155 @@
+/* ---- Shop layout: 4 framed panels in a 2x2 grid ---- */
+.shop-grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 14px;
+  padding: 22px;
+}
+
+.panel {
+  overflow: hidden;
+  font-size: 30px;
+  line-height: 1.25;
+}
+
+/* ---- Top-left: portrait ---- */
+.portrait {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: #000;
+}
+.portrait img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.portrait-fallback {
+  font-family: "FancyOldEn", serif;
+  font-size: 40px;
+  text-align: center;
+  opacity: 0.5;
+  white-space: pre-line;
+}
+
+/* ---- Top-right: item info ---- */
+.info-title {
+  font-size: 34px;
+  margin-bottom: 12px;
+}
+.info-blurb {
+  font-size: 24px;
+  white-space: pre-line;
+  opacity: 0.9;
+}
+.info-price {
+  margin-top: 16px;
+  color: var(--col-yellow);
+  font-size: 26px;
+}
+
+/* ---- Bottom-left: item list ---- */
+.item-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+.item-row {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  padding: 2px 4px;
+  cursor: pointer;
+}
+.item-cursor {
+  width: 44px;
+  display: inline-flex;
+  justify-content: center;
+}
+.item-price {
+  color: var(--col-fg);
+  padding-left: 24px;
+}
+
+/* ---- Bottom-right: buy prompt / dialog ---- */
+.buy-panel {
+  display: flex;
+  flex-direction: column;
+}
+.buy-text {
+  flex: 1;
+  white-space: pre-line;
+  font-size: 30px;
+}
+.confirm-option {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  align-items: center;
+}
+.buy-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 12px;
+}
+.gold {
+  color: var(--col-fg);
+  font-size: 30px;
+}
+.space-count {
+  font-size: 22px;
+  opacity: 0.85;
+}
+.dialog-cue {
+  font-size: 22px;
+  opacity: 0.7;
+  text-align: right;
+  margin-top: 8px;
+}
+
+/* ---- SOUL cursor ---- */
+.heart-glyph {
+  color: var(--col-heart);
+  font-size: 28px;
+  line-height: 1;
+}
+.heart-sprite {
+  width: 24px;
+  height: 24px;
+}
+
+/* ---- Shop-closed overlay ---- */
+.closed-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  background: #000;
+  text-align: center;
+}
+.closed-overlay p {
+  font-family: "FancyOldEn", serif;
+  font-size: 40px;
+}
+.reopen-btn {
+  font: inherit;
+  font-size: 28px;
+  color: #000;
+  background: var(--col-fg);
+  border: 0;
+  padding: 10px 22px;
+  cursor: pointer;
+}
