@@ -168,9 +168,9 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 4px;
+  gap: 2px;
   overflow: hidden;
-  font-size: 26px;
+  font-size: 22px;
 }
 .item-row {
   display: grid;
@@ -252,10 +252,10 @@
   font-size: 28px;
   line-height: 1;
 }
-/* native 16x16; show at 2x for a crisp integer scale */
+/* native 16x16; */
 .heart-sprite {
-  width: 32px;
-  height: 32px;
+  width: 16px;
+  height: 16px;
 }
 
 /* ---- Shop-closed overlay ---- */
