@@ -35,7 +35,6 @@
   /* Hidden by default; just appears on top when in a buy context (no slide). */
   opacity: 0;
   pointer-events: none;
-  transition: opacity 120ms linear;
 }
 .info--open {
   opacity: 1;
@@ -74,7 +73,7 @@
    x~8-11, slice 28 scaled to a 40px border => *40/28). background-clip can only
    land on the border/padding/content box, not mid-border on the line, so:
      - kill the inherited var(--col-bg) fill (border-box => spills past the line),
-     - paint the black ourselves as a rectangle inset exactly 16px (to the line).
+     - paint the black ourselves as a rectangle inset exactly 18px (to the line).
    This fills right up to the frame line with no green gap and no outside spill,
    while keeping border-width:40 so the text stays inset and the frame is intact. */
 .info.info--buyframe {
