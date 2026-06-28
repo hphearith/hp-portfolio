@@ -114,7 +114,7 @@
 .character-fallback {
   align-self: center;
   margin: auto;
-  font-family: "FancyOldEn", serif;
+  font-family: "PixelMono", monospace;
   font-size: 36px;
   text-align: center;
   opacity: 0.4;
@@ -271,7 +271,7 @@
   text-align: center;
 }
 .closed-overlay p {
-  font-family: "FancyOldEn", serif;
+  font-family: "PixelMono", monospace;
   font-size: 40px;
 }
 .reopen-btn {

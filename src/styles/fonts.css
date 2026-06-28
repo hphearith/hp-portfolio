@@ -9,16 +9,10 @@
 
 @font-face {
   font-family: "PixelMono";
-  src: url("/fonts/pixelmono.woff2") format("woff2");
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "FancyOldEn";
-  src: url("/fonts/fancyolden.woff2") format("woff2");
+  src: url("/fonts/DeterminationMonoWeb.woff") format("woff");
   font-display: swap;
 }
 
 .font-fancy {
-  font-family: "FancyOldEn", "PixelMono", serif;
+  font-family: "PixelMono", monospace;
 }
