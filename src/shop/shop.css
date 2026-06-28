@@ -15,24 +15,55 @@
   line-height: 1.25;
 }
 
-/* ---- Top-left: portrait ---- */
-.portrait {
+/* Placement:
+   - art-layer fills the WHOLE top half (both columns), sitting behind.
+   - info floats on top of the art in the top-right (stacks over art-layer).
+   - menu bottom-left, buy bottom-right form the lower row.
+   The grid gap is removed for the top row so the art reaches the edges. */
+.art-layer {
+  grid-column: 1 / 3;
+  grid-row: 1;
+  z-index: 0;
+}
+.info {
+  grid-column: 2;
+  grid-row: 1;
+  z-index: 2; /* floats above the art */
+  align-self: stretch;
+}
+.menu {
+  grid-column: 1;
+  grid-row: 2;
+}
+.buy-panel {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+/* ---- Top half: full-width art (background + character) ----
+   Authored at base resolution (1px art = 1 stage unit). Region is ~916x241.
+   Drop /sprites/bg.png for a background; character sits in front. See ASSETS.md. */
+.art-layer {
   position: relative;
+  overflow: hidden;
   display: flex;
   align-items: flex-end;
-  justify-content: center;
-  background: #000;
+  justify-content: flex-start;
+  background: #000 center / cover no-repeat;
+  background-image: url("/sprites/bg.png");
 }
-.portrait img {
+.art-character {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
 }
-.portrait-fallback {
+.character-fallback {
+  align-self: center;
+  margin: auto;
   font-family: "FancyOldEn", serif;
-  font-size: 40px;
+  font-size: 36px;
   text-align: center;
-  opacity: 0.5;
+  opacity: 0.4;
   white-space: pre-line;
 }
 

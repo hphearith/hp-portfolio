@@ -15,7 +15,7 @@ import "./shop.css";
 
 export default function ShopScreen() {
   const [state, dispatch] = useReducer(shopReducer, initialShopState);
-  const [hasPortrait, setHasPortrait] = useState(true);
+  const [hasCharacter, setHasCharacter] = useState(true);
 
   useKeyboardNav(dispatch, !state.closed);
 
@@ -95,18 +95,18 @@ export default function ShopScreen() {
 
   return (
     <div className="shop-grid">
-      {/* Top-left: portrait */}
-      <Frame className="panel portrait">
-        {hasPortrait ? (
+      {/* Top half: full-width art layer. Background comes from /sprites/bg.png
+          (CSS). An optional front character sprite can go at /sprites/character.png. */}
+      <div className="art-layer">
+        {hasCharacter && (
           <img
-            src="/sprites/rouxls.png"
+            className="art-character"
+            src="/sprites/character.png"
             alt="The shopkeeper"
-            onError={() => setHasPortrait(false)}
+            onError={() => setHasCharacter(false)}
           />
-        ) : (
-          <span className="portrait-fallback">{"ROUXLS\nKAARD"}</span>
         )}
-      </Frame>
+      </div>
 
       {/* Top-right: item info */}
       <Frame className="panel info">
@@ -124,8 +124,8 @@ export default function ShopScreen() {
         )}
       </Frame>
 
-      {/* Bottom-left: item list */}
-      <Frame className="panel">
+      {/* Left column (spans both rows): item list */}
+      <Frame className="panel menu">
         <div className="item-list" role="menu" aria-label="Shop items">
           {PROJECTS.map((p, i) => (
             <div

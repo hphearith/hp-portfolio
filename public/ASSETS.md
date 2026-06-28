@@ -11,7 +11,12 @@ These paths are referenced by the code. Everything works without them (placehold
 - `frame.png` — 9-slice window border with decorative corners (then add the
   `frame--sprite` class via the `sprite` prop on `<Frame>`). Tune the slice/width
   in `src/styles/frame.css` to your corner size.
-- `rouxls.png` — shopkeeper portrait (or your own avatar).
+- `character.png` — your pixel-art character in the top-left box (transparent
+  background). Base coordinate space is 960x540; the character box is ~568x241
+  (inner area ~552x225 after the frame). Fit art within ~552x225. For crisp
+  pixels, author at an integer fraction of the display size (e.g. draw 138x56 ->
+  shows 4x as 552x224, or 184x75 -> 3x). Style in `.character-box`
+  (src/shop/shop.css).
 - `heart.png` — red SOUL cursor (then pass `sprite` to `<Heart>`).
 - project thumbnails (optional, referenced by `Project.thumb`).
 
