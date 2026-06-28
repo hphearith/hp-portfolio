@@ -115,10 +115,11 @@ export default function ShopScreen() {
     );
   }
 
-  // talk = single full-width box ("shoptalk"); buy-reaction = right box of "shopbuy"
+  // talk = single full-width box ("shoptalk"); other phases use the two
+  // side-by-side bottom boxes (item list + command/buy prompt).
   const talkMode = state.phase === "dialog" && state.dialogReturn === "root";
   const buyDialog = state.phase === "dialog" && state.dialogReturn === "buy";
-  // buy-ish phases use the combined shopbuy1 frame + the sliding shopbuy2 box
+  // buy-ish phases show the item list + the info box on top.
   const buyish =
     state.phase === "buy" || state.phase === "confirm" || buyDialog;
   const showItemList = buyish;
@@ -146,19 +147,8 @@ export default function ShopScreen() {
         )}
       </div>
 
-      {/* Combined two-box bottom frame behind the item/command content:
-          shopDTR at root, shopbuy1 in buy phase (its top-right holds the dock
-          seam that shopbuy2 — the info box — slides up out of). */}
-      {!talkMode && (
-        <div
-          className={`bottom-frame ${
-            buyish ? "bottom-frame--buy" : "bottom-frame--root"
-          }`}
-        />
-      )}
-
-      {/* Top-right: item info — slides up on buy/confirm, sits, slides down at root.
-          In buy phase it wears the bottomless shopbuy2 frame so it docks seamlessly. */}
+      {/* Top-right: item info box — appears on top in a buy context
+          (shoptalk frame, no slide). */}
       <Frame
         className={`panel info${infoOpen ? " info--open" : ""}${
           buyish ? " info--buyframe" : ""
@@ -183,7 +173,7 @@ export default function ShopScreen() {
 
       {/* Left (wide) panel: greeting -> item list */}
       {!talkMode && (
-      <Frame className="panel menu bare">
+      <Frame className="panel menu">
         {showItemList ? (
           <div className="item-list" role="menu" aria-label="Shop items">
             {PROJECTS.map((p, i) => (
@@ -223,7 +213,7 @@ export default function ShopScreen() {
 
       {/* Right panel: commands (Buy/Talk/Exit) / Yes-No prompt / Rouxls reaction */}
       {!talkMode && (
-      <Frame className="panel buy-panel bare">
+      <Frame className="panel buy-panel">
         {state.phase === "confirm" ? (
           <div className="buy-text">
             <div>{`Buyeth for\n${selected.price}$ ?`}</div>

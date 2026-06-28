@@ -32,7 +32,7 @@
   margin: 0;
   border-image-source: url("/sprites/shoptalk.png");
   border-image-slice: 28;
-  border-image-width: 16px;
+  border-image-width: 40px;
   border-image-repeat: round;
   border-style: solid;
   border-width: 16px;
