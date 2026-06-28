@@ -126,7 +126,7 @@ export default function ShopScreen() {
 
   const dialogEl = (
     <div className="dialog-box" onClick={() => dispatch({ type: "ADVANCE" })}>
-      <div aria-live="polite">
+      <div className="dialog-text" aria-live="polite">
         <Typewriter text={state.dialog ?? ""} onChar={() => playSfx("squeak")} />
       </div>
       <div className="dialog-cue">[Z]</div>
@@ -206,7 +206,9 @@ export default function ShopScreen() {
             </div>
           </div>
         ) : (
-          <div className="greeting font-fancy">{GREETING}</div>
+          <div className="greeting font-fancy">
+            <Typewriter text={GREETING} onChar={() => playSfx("squeak")} />
+          </div>
         )}
       </Frame>
       )}
