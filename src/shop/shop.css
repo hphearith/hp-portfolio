@@ -49,8 +49,13 @@
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
-  background: #000 center / cover no-repeat;
+  /* Author bg.png at the box aspect (~916x241, or a clean integer fraction
+     like 458x120 ->2x, 229x60 ->4x) so it fills exactly with no crop or
+     non-integer resample. 100% 100% fills the box; pixelated keeps it crisp. */
+  background: #000 no-repeat;
   background-image: url("/sprites/bg.png");
+  background-size: 100% 100%;
+  image-rendering: pixelated;
 }
 .art-character {
   max-width: 100%;

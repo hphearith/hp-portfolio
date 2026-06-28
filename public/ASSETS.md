@@ -8,6 +8,12 @@ These paths are referenced by the code. Everything works without them (placehold
 - `fancyolden.woff2` — Rouxls' "Buyeth" flavour text. A blackletter/serif.
 
 ## /sprites
+- `bg.png` — top-half artwork (background, with Rouxls in front of it). The art
+  area is ~916x241 in base units. Author at that exact aspect ratio (or a clean
+  integer fraction: 458x120 ->shows 2x, 229x60 ->4x) so it fills with no crop or
+  blur. CSS uses `background-size: 100% 100%` + `image-rendering: pixelated`, so
+  matching the aspect avoids stretching. PNG-8 (indexed) or lossless WebP; never
+  JPG (lossy smears pixels). Styled in `.art-layer` (src/shop/shop.css).
 - `frame.png` — 9-slice window border with decorative corners (then add the
   `frame--sprite` class via the `sprite` prop on `<Frame>`). Tune the slice/width
   in `src/styles/frame.css` to your corner size.
