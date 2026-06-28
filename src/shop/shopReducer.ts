@@ -41,6 +41,8 @@ export type ShopState = {
   dialogReady: boolean;
   /** highlighted talk topic 0..TALK_EXIT_INDEX (talk phase) */
   talkIndex: number;
+  /** bumped on every committed menu selection — drives the "select" sfx */
+  selectTick: number;
 };
 
 export const initialShopState: ShopState = {
@@ -55,6 +57,7 @@ export const initialShopState: ShopState = {
   closed: false,
   dialogReady: true,
   talkIndex: 0,
+  selectTick: 0,
 };
 
 export type ShopAction =
@@ -135,64 +138,19 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
       }
       return state;
 
-    case "SELECT":
-      if (state.phase === "root") {
-        if (state.rootIndex === CMD_BUY) {
-          return { ...state, phase: "buy", itemIndex: 0 };
-        }
-        if (state.rootIndex === CMD_TALK) {
-          return {
-            ...state,
-            phase: "talk",
-            talkIndex: 0,
-          };
-        }
-        // Exit
-        return { ...state, closed: true };
-      }
-      if (state.phase === "buy") {
-        // the Exit row at the bottom backs out to the root command menu
-        if (state.itemIndex === BUY_EXIT_INDEX) {
-          return { ...state, phase: "root" };
-        }
-        // open the buy prompt, default cursor on Yes
-        return { ...state, phase: "confirm", confirmYes: true };
-      }
-      if (state.phase === "confirm") {
-        if (state.confirmYes) {
-          const project = PROJECTS[state.itemIndex];
-          return {
-            ...state,
-            phase: "dialog",
-            dialog: project.buyLine,
-            dialogReturn: "buy",
-            pendingLink: project.link,
-            dialogReady: false,
-          };
-        }
-        // "No" -> back to the list
-        return { ...state, phase: "buy" };
-      }
-      if (state.phase === "talk") {
-        if (state.talkIndex === TALK_EXIT_INDEX) {
-          return { ...state, phase: "root" };
-        }
-        const topic = TALK_TOPICS[state.talkIndex];
-        return {
-          ...state,
-          phase: "dialog",
-          dialog: topic.text,
-          dialogReturn: "talk",
-          dialogReady: false,
-        };
-      }
+    case "SELECT": {
+      // Dialog advance/dismiss is not a menu selection — no "select" ding.
       if (state.phase === "dialog") {
         if (!state.dialogReady) {
           return { ...state, dialogReady: true };
         }
         return dismissDialog(state);
       }
-      return state;
+      const next = selectInMenu(state);
+      // Only ding when the selection actually committed a choice.
+      if (next === state) return state;
+      return { ...next, selectTick: state.selectTick + 1 };
+    }
 
     case "ADVANCE":
       if (state.phase === "dialog") {
@@ -225,6 +183,60 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
     default:
       return state;
   }
+}
+
+/**
+ * Resolve a SELECT in one of the menu phases (root/buy/confirm/talk).
+ * Returns the unchanged state if nothing is selectable.
+ */
+function selectInMenu(state: ShopState): ShopState {
+  if (state.phase === "root") {
+    if (state.rootIndex === CMD_BUY) {
+      return { ...state, phase: "buy", itemIndex: 0 };
+    }
+    if (state.rootIndex === CMD_TALK) {
+      return { ...state, phase: "talk", talkIndex: 0 };
+    }
+    // Exit
+    return { ...state, closed: true };
+  }
+  if (state.phase === "buy") {
+    // the Exit row at the bottom backs out to the root command menu
+    if (state.itemIndex === BUY_EXIT_INDEX) {
+      return { ...state, phase: "root" };
+    }
+    // open the buy prompt, default cursor on Yes
+    return { ...state, phase: "confirm", confirmYes: true };
+  }
+  if (state.phase === "confirm") {
+    if (state.confirmYes) {
+      const project = PROJECTS[state.itemIndex];
+      return {
+        ...state,
+        phase: "dialog",
+        dialog: project.buyLine,
+        dialogReturn: "buy",
+        pendingLink: project.link,
+        dialogReady: false,
+      };
+    }
+    // "No" -> back to the list
+    return { ...state, phase: "buy" };
+  }
+  if (state.phase === "talk") {
+    if (state.talkIndex === TALK_EXIT_INDEX) {
+      return { ...state, phase: "root" };
+    }
+    const topic = TALK_TOPICS[state.talkIndex];
+    return {
+      ...state,
+      phase: "dialog",
+      dialog: topic.text,
+      dialogReturn: "talk",
+      dialogReady: false,
+    };
+  }
+  return state;
 }
 
 /** Leave the dialog box, returning to its origin and firing any queued link. */

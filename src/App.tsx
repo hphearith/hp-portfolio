@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 import ShopScreen from "./shop/ShopScreen";
+import MuteButton from "./components/MuteButton";
+import { startBgm } from "./audio/sfx";
 import { PROJECTS } from "./shop/items";
 
 const BASE_W = 960;
@@ -22,11 +24,32 @@ export default function App() {
     return () => window.removeEventListener("resize", fit);
   }, []);
 
+  // Try to start the looping BGM immediately on landing. Browsers usually
+  // block autoplay with sound until a user gesture, so we also retry on the
+  // first interaction (pointer or key) — whichever lands first wins (startBgm
+  // is a no-op once it's already playing).
+  useEffect(() => {
+    startBgm();
+    function kick() {
+      startBgm();
+      window.removeEventListener("pointerdown", kick);
+      window.removeEventListener("keydown", kick);
+    }
+    window.addEventListener("pointerdown", kick);
+    window.addEventListener("keydown", kick);
+    return () => {
+      window.removeEventListener("pointerdown", kick);
+      window.removeEventListener("keydown", kick);
+    };
+  }, []);
+
   return (
     <>
       <div className="stage" ref={stageRef}>
         <ShopScreen />
       </div>
+
+      <MuteButton />
 
       {/* Real content for crawlers + screen readers (visually hidden). */}
       <section className="sr-only" aria-label="Portfolio projects">

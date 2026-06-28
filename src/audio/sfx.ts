@@ -1,4 +1,4 @@
-import { Howl, Howler } from "howler";
+import { Howl } from "howler";
 
 /*
  * Drop blip files into /public/sfx/ (wav or ogg). Until they exist these Howls
@@ -9,10 +9,10 @@ import { Howl, Howler } from "howler";
 export type SfxName = "move" | "select" | "cancel" | "squeak";
 
 const SOURCES: Record<SfxName, string> = {
-  move: "/sfx/move.wav",
-  select: "/sfx/select.wav",
-  cancel: "/sfx/cancel.wav",
-  squeak: "/sfx/squeak.wav",
+  move: "/sfx/squeak.ogg",
+  select: "/sfx/select.ogg",
+  cancel: "/sfx/squeak.ogg",
+  squeak: "/sfx/squeak.ogg",
 };
 
 let sounds: Partial<Record<SfxName, Howl>> | null = null;
@@ -35,6 +35,32 @@ export function preloadSfx() {
   ensureLoaded();
 }
 
+// ---- Background music ----
+// Long file: html5:true streams it instead of decoding the whole buffer.
+let bgm: Howl | null = null;
+
+function ensureBgm() {
+  if (bgm) return bgm;
+  bgm = new Howl({
+    src: ["/sfx/bgm.ogg"],
+    loop: true,
+    volume: 0.35,
+    html5: true,
+    preload: true,
+    mute: muted,
+  });
+  return bgm;
+}
+
+/**
+ * Start the looping BGM. Must be called from a user gesture (browser autoplay
+ * policy). No-op if already playing.
+ */
+export function startBgm() {
+  const b = ensureBgm();
+  if (!b.playing()) b.play();
+}
+
 export function playSfx(name: SfxName) {
   try {
     const s = ensureLoaded()[name];
@@ -44,7 +70,22 @@ export function playSfx(name: SfxName) {
   }
 }
 
-/** Master mute toggle (e.g. for a sound button later). */
-export function setMuted(muted: boolean) {
-  Howler.mute(muted);
+// ---- BGM mute ----
+// Only mutes the music; sound effects keep playing.
+let muted = false;
+
+/** Mute/unmute the background music (SFX unaffected). */
+export function setMuted(value: boolean) {
+  muted = value;
+  bgm?.mute(value);
+}
+
+export function isMuted() {
+  return muted;
+}
+
+/** Flip mute and return the new state. */
+export function toggleMute() {
+  setMuted(!muted);
+  return muted;
 }

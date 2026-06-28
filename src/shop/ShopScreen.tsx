@@ -38,7 +38,7 @@ export default function ShopScreen() {
   const prevRoot = useRef(state.rootIndex);
   const prevItem = useRef(state.itemIndex);
   const prevConfirm = useRef(state.confirmYes);
-  const prevPhase = useRef(state.phase);
+  const prevSelectTick = useRef(state.selectTick);
 
   useEffect(() => {
     if (state.phase === "root" && state.rootIndex !== prevRoot.current) {
@@ -61,13 +61,14 @@ export default function ShopScreen() {
     prevConfirm.current = state.confirmYes;
   }, [state.confirmYes, state.phase]);
 
+  // "select" ding on every committed menu selection (Buy / Talk / Exit /
+  // items / Yes / No / topics). The reducer bumps selectTick on each.
   useEffect(() => {
-    if (state.phase !== prevPhase.current) {
-      if (state.phase === "buy" || state.phase === "confirm") playSfx("select");
-      if (state.phase === "dialog") playSfx("squeak");
-      prevPhase.current = state.phase;
+    if (state.selectTick !== prevSelectTick.current) {
+      playSfx("select");
+      prevSelectTick.current = state.selectTick;
     }
-  }, [state.phase]);
+  }, [state.selectTick]);
 
   // ---- Side effect: open the queued project link ----
   // Links are DISABLED for now (no real targets wired yet). When ready, set
