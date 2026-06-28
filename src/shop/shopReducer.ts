@@ -1,4 +1,4 @@
-import { PROJECTS, ROOT_COMMANDS, CMD_BUY, CMD_TALK, TALK_LINE } from "./items";
+import { PROJECTS, ROOT_COMMANDS, CMD_BUY, CMD_TALK, TALK_TOPICS, TALK_EXIT_INDEX, TALK_ROWS } from "./items";
 
 /** number of project rows in the buy list */
 export const ITEM_COUNT = PROJECTS.length;
@@ -15,8 +15,9 @@ export const ROOT_COUNT = ROOT_COMMANDS.length;
  *   buy     -> heart in the left item list (info box pops up + sits)
  *   confirm -> Yes / No on the right
  *   dialog  -> Rouxls typewriter line; returns to where it came from
+ *   talk    -> conversation topic menu (About yourself / experience / etc.)
  */
-export type Phase = "root" | "buy" | "confirm" | "dialog";
+export type Phase = "root" | "buy" | "confirm" | "dialog" | "talk";
 
 export type ShopState = {
   phase: Phase;
@@ -38,6 +39,8 @@ export type ShopState = {
   closed: boolean;
   /** false while dialog text is typing; true once revealed or skipped */
   dialogReady: boolean;
+  /** highlighted talk topic 0..TALK_EXIT_INDEX (talk phase) */
+  talkIndex: number;
 };
 
 export const initialShopState: ShopState = {
@@ -51,6 +54,7 @@ export const initialShopState: ShopState = {
   linkToOpen: null,
   closed: false,
   dialogReady: true,
+  talkIndex: 0,
 };
 
 export type ShopAction =
@@ -61,6 +65,7 @@ export type ShopAction =
   | { type: "ADVANCE" }
   | { type: "POINT_ROOT"; index: number }
   | { type: "POINT_AT"; index: number }
+  | { type: "POINT_TALK"; index: number }
   | { type: "SET_CONFIRM"; yes: boolean }
   | { type: "CLEAR_LINK" }
   | { type: "REOPEN" }
@@ -86,6 +91,9 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
       if (state.phase === "confirm") {
         return { ...state, confirmYes: !state.confirmYes };
       }
+      if (state.phase === "talk") {
+        return { ...state, talkIndex: wrap(state.talkIndex - 1, TALK_ROWS) };
+      }
       return state;
 
     case "MOVE_DOWN":
@@ -98,6 +106,9 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
       if (state.phase === "confirm") {
         return { ...state, confirmYes: !state.confirmYes };
       }
+      if (state.phase === "talk") {
+        return { ...state, talkIndex: wrap(state.talkIndex + 1, TALK_ROWS) };
+      }
       return state;
 
     case "POINT_ROOT":
@@ -109,6 +120,12 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
     case "POINT_AT":
       if (state.phase === "buy" && action.index < BUY_ROWS) {
         return { ...state, itemIndex: action.index };
+      }
+      return state;
+
+    case "POINT_TALK":
+      if (state.phase === "talk" && action.index < TALK_ROWS) {
+        return { ...state, talkIndex: action.index };
       }
       return state;
 
@@ -126,11 +143,8 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
         if (state.rootIndex === CMD_TALK) {
           return {
             ...state,
-            phase: "dialog",
-            dialog: TALK_LINE,
-            dialogReturn: "root",
-            pendingLink: null,
-            dialogReady: false,
+            phase: "talk",
+            talkIndex: 0,
           };
         }
         // Exit
@@ -159,6 +173,19 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
         // "No" -> back to the list
         return { ...state, phase: "buy" };
       }
+      if (state.phase === "talk") {
+        if (state.talkIndex === TALK_EXIT_INDEX) {
+          return { ...state, phase: "root" };
+        }
+        const topic = TALK_TOPICS[state.talkIndex];
+        return {
+          ...state,
+          phase: "dialog",
+          dialog: topic.text,
+          dialogReturn: "talk",
+          dialogReady: false,
+        };
+      }
       if (state.phase === "dialog") {
         if (!state.dialogReady) {
           return { ...state, dialogReady: true };
@@ -185,6 +212,9 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
       }
       if (state.phase === "dialog") {
         return dismissDialog(state);
+      }
+      if (state.phase === "talk") {
+        return { ...state, phase: "root" };
       }
       if (state.phase === "buy") {
         // back out of the item list to the root command menu

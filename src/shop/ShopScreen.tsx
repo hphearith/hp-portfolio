@@ -9,6 +9,8 @@ import {
   STARTING_GOLD,
   ROOT_COMMANDS,
   GREETING,
+  TALK_TOPICS,
+  TALK_EXIT_INDEX,
 } from "./items";
 import { initialShopState, shopReducer, BUY_EXIT_INDEX } from "./shopReducer";
 import "./shop.css";
@@ -108,6 +110,12 @@ export default function ShopScreen() {
     dispatch({ type: "SELECT" });
   }
 
+  function tapTalk(index: number) {
+    if (state.phase !== "talk") return;
+    if (state.talkIndex === index) dispatch({ type: "SELECT" });
+    else dispatch({ type: "POINT_TALK", index });
+  }
+
   if (state.closed) {
     return (
       <div className="closed-overlay">
@@ -125,7 +133,9 @@ export default function ShopScreen() {
 
   // talk = single full-width box ("shoptalk"); other phases use the two
   // side-by-side bottom boxes (item list + command/buy prompt).
-  const talkMode = state.phase === "dialog" && state.dialogReturn === "root";
+  const talkMode =
+    state.phase === "dialog" &&
+    (state.dialogReturn === "root" || state.dialogReturn === "talk");
   const buyDialog = state.phase === "dialog" && state.dialogReturn === "buy";
   // buy-ish phases show the item list + the info box on top.
   const buyish =
@@ -184,7 +194,7 @@ export default function ShopScreen() {
       {/* Talk = one full-width box spanning the bottom row ("shoptalk") */}
       {talkMode && <Frame className="panel talk-box">{dialogEl}</Frame>}
 
-      {/* Left (wide) panel: greeting -> item list */}
+      {/* Left (wide) panel: greeting -> item list -> talk topics */}
       {!talkMode && (
       <Frame className="panel menu">
         {showItemList ? (
@@ -213,6 +223,38 @@ export default function ShopScreen() {
             >
               <span className="item-cursor">
                 {onBuyExit && state.phase === "buy" && <Heart />}
+              </span>
+              <span className="item-name">Exit</span>
+              <span className="item-price" />
+            </div>
+          </div>
+        ) : state.phase === "talk" ? (
+          <div className="item-list" role="menu" aria-label="Talk topics">
+            {TALK_TOPICS.map((topic, i) => (
+              <div
+                key={topic.label}
+                className="item-row"
+                role="menuitem"
+                aria-current={state.talkIndex === i ? "true" : undefined}
+                onClick={() => tapTalk(i)}
+              >
+                <span className="item-cursor">
+                  {state.talkIndex === i && <Heart />}
+                </span>
+                <span className="item-name">{topic.label}</span>
+                <span className="item-price" />
+              </div>
+            ))}
+            <div
+              className="item-row"
+              role="menuitem"
+              aria-current={
+                state.talkIndex === TALK_EXIT_INDEX ? "true" : undefined
+              }
+              onClick={() => tapTalk(TALK_EXIT_INDEX)}
+            >
+              <span className="item-cursor">
+                {state.talkIndex === TALK_EXIT_INDEX && <Heart />}
               </span>
               <span className="item-name">Exit</span>
               <span className="item-price" />

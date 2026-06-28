@@ -27,9 +27,32 @@ export const CMD_EXIT = 2;
 export const GREETING =
   "* Sup, worm.\nWelcometh to mine\nfine SHOPPE.\nWhat wouldst thou?";
 
-/** Line shown when the player picks Talk. */
-export const TALK_LINE =
-  "* Thou wishest to CHATTE? With ME? ...How quainte. Buyeth something.";
+export type TalkTopic = {
+  label: string;
+  text: string;
+};
+
+export const TALK_TOPICS: TalkTopic[] = [
+  {
+    label: "About yourself",
+    text: "* I am Rouxls Kaard,\nDuke of Puzzleth.\nI keepeth this fine\nshoppe for worms\nlike thee.",
+  },
+  {
+    label: "About your experience",
+    text: "* I hath crafted manye\npuzzles for the King\nof Spades himself.\nNo worm canst solve\nthem — except me.",
+  },
+  {
+    label: "About your education",
+    text: "* I learnedst the art\nof puzzles at the\nCarde Academie.\nGraduated with\nhighest honours.",
+  },
+  {
+    label: "About your ambitions",
+    text: "* I shalt becometh the\ngreatest puzzle-master\nin all the land.\nThen every worm\nwilst respect me!",
+  },
+];
+
+export const TALK_EXIT_INDEX = TALK_TOPICS.length;
+export const TALK_ROWS = TALK_TOPICS.length + 1;
 
 /**
  * Shop wares = portfolio projects. Edit these with your real work.
