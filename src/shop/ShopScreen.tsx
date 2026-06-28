@@ -16,6 +16,7 @@ import "./shop.css";
 export default function ShopScreen() {
   const [state, dispatch] = useReducer(shopReducer, initialShopState);
   const [hasCharacter, setHasCharacter] = useState(true);
+  const [greetingSkip, setGreetingSkip] = useState(false);
 
   useKeyboardNav(dispatch, !state.closed);
 
@@ -23,6 +24,13 @@ export default function ShopScreen() {
   useEffect(() => {
     preloadSfx();
   }, []);
+
+  // reset greeting typewriter when returning to root
+  useEffect(() => {
+    if (state.phase === "root") {
+      setGreetingSkip(false);
+    }
+  }, [state.phase]);
 
   // ---- SFX: react to state transitions ----
   const prevRoot = useRef(state.rootIndex);
@@ -127,7 +135,12 @@ export default function ShopScreen() {
   const dialogEl = (
     <div className="dialog-box" onClick={() => dispatch({ type: "ADVANCE" })}>
       <div className="dialog-text" aria-live="polite">
-        <Typewriter text={state.dialog ?? ""} onChar={() => playSfx("squeak")} />
+        <Typewriter
+          text={state.dialog ?? ""}
+          skip={state.dialogReady}
+          onChar={() => playSfx("squeak")}
+          onComplete={() => dispatch({ type: "DIALOG_SKIP" })}
+        />
       </div>
       <div className="dialog-cue">[Z]</div>
     </div>
@@ -206,8 +219,15 @@ export default function ShopScreen() {
             </div>
           </div>
         ) : (
-          <div className="greeting font-fancy">
-            <Typewriter text={GREETING} onChar={() => playSfx("squeak")} />
+          <div
+            className="greeting font-fancy"
+            onClick={() => setGreetingSkip(true)}
+          >
+            <Typewriter
+              text={GREETING}
+              skip={greetingSkip}
+              onChar={() => playSfx("squeak")}
+            />
           </div>
         )}
       </Frame>

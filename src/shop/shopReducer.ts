@@ -36,6 +36,8 @@ export type ShopState = {
   linkToOpen: string | null;
   /** true once Exit is chosen */
   closed: boolean;
+  /** false while dialog text is typing; true once revealed or skipped */
+  dialogReady: boolean;
 };
 
 export const initialShopState: ShopState = {
@@ -48,6 +50,7 @@ export const initialShopState: ShopState = {
   pendingLink: null,
   linkToOpen: null,
   closed: false,
+  dialogReady: true,
 };
 
 export type ShopAction =
@@ -60,7 +63,8 @@ export type ShopAction =
   | { type: "POINT_AT"; index: number }
   | { type: "SET_CONFIRM"; yes: boolean }
   | { type: "CLEAR_LINK" }
-  | { type: "REOPEN" };
+  | { type: "REOPEN" }
+  | { type: "DIALOG_SKIP" };
 
 const wrap = (n: number, len: number) => ((n % len) + len) % len;
 
@@ -126,6 +130,7 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
             dialog: TALK_LINE,
             dialogReturn: "root",
             pendingLink: null,
+            dialogReady: false,
           };
         }
         // Exit
@@ -148,21 +153,31 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
             dialog: project.buyLine,
             dialogReturn: "buy",
             pendingLink: project.link,
+            dialogReady: false,
           };
         }
         // "No" -> back to the list
         return { ...state, phase: "buy" };
       }
       if (state.phase === "dialog") {
+        if (!state.dialogReady) {
+          return { ...state, dialogReady: true };
+        }
         return dismissDialog(state);
       }
       return state;
 
     case "ADVANCE":
       if (state.phase === "dialog") {
+        if (!state.dialogReady) {
+          return { ...state, dialogReady: true };
+        }
         return dismissDialog(state);
       }
       return state;
+
+    case "DIALOG_SKIP":
+      return { ...state, dialogReady: true };
 
     case "CANCEL":
       if (state.phase === "confirm") {
@@ -190,5 +205,6 @@ function dismissDialog(state: ShopState): ShopState {
     dialog: null,
     pendingLink: null,
     linkToOpen: state.pendingLink,
+    dialogReady: true,
   };
 }

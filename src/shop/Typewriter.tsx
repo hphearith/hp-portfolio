@@ -23,6 +23,8 @@ type Props = {
   onChar?: () => void;
   /** fired once when the full text is shown */
   onComplete?: () => void;
+  /** when true, instantly reveal all text */
+  skip?: boolean;
 };
 
 /** Reveals text one character at a time, or instantly if reduced motion. */
@@ -31,6 +33,7 @@ export default function Typewriter({
   speed = 28,
   onChar,
   onComplete,
+  skip = false,
 }: Props) {
   const [count, setCount] = useState(0);
   const reduced = usePrefersReducedMotion();
@@ -41,6 +44,13 @@ export default function Typewriter({
     setCount(reduced ? text.length : 0);
     completed.current = false;
   }, [text, reduced]);
+
+  // instantly reveal all text when skip prop becomes true
+  useEffect(() => {
+    if (skip) {
+      setCount(text.length);
+    }
+  }, [skip, text.length]);
 
   useEffect(() => {
     if (count >= text.length) {
