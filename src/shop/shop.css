@@ -5,7 +5,9 @@
   display: grid;
   grid-template-columns: 1.7fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 14px;
+  /* no row-gap so the sliding shopbuy2 box docks flush onto shopbuy1's top */
+  column-gap: 14px;
+  row-gap: 0;
   padding: 22px;
 }
 
@@ -30,6 +32,24 @@
   grid-row: 1;
   z-index: 2; /* floats above the art */
   align-self: stretch;
+  /* Hidden by default: slid down (over the buy panel) and invisible.
+     Slides up into place when phase != browsing (confirm/dialog), like the
+     Deltarune item-description box. A slide is fine here (the heart snaps,
+     but this panel genuinely slides in the original). */
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 160ms linear, opacity 160ms linear;
+}
+.info--open {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .info {
+    transition: none;
+  }
 }
 .menu {
   grid-column: 1;
@@ -38,6 +58,51 @@
 .buy-panel {
   grid-column: 2;
   grid-row: 2;
+}
+/* Talk: one wide box across the whole bottom row ("shoptalk" look) */
+.talk-box {
+  grid-column: 1 / 3;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Combined two-box bottom frame (drawn behind the item/command panels) ----
+   shopDTR at root, shopbuy1 in buy phase. Both share the same divider position
+   (62.8% == the 1.7fr/1fr grid split), so the bare panels land in their boxes.
+   shopbuy1 additionally bakes in the dock seam for the sliding shopbuy2 box. */
+.bottom-frame {
+  grid-column: 1 / 3;
+  grid-row: 2;
+  z-index: 0;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+.bottom-frame--root {
+  background-image: url("/sprites/shopDTR.png");
+}
+.bottom-frame--buy {
+  background-image: url("/sprites/shopbuy1.png");
+}
+/* In buy phase the item/buy panels drop their own shoptalk border (shopbuy1
+   draws it instead) but keep their box padding + sit above the frame. */
+.panel.bare {
+  border-image-source: none;
+  border-color: transparent;
+  background: transparent;
+  z-index: 1;
+}
+/* The description box wears the bottomless shopbuy2 frame: top + side walls,
+   NO bottom edge (slice/width 0 on the bottom) so it docks flush and the box
+   appears to grow upward out of shopbuy1's top as it slides. */
+.info--buyframe {
+  border-image-source: url("/sprites/shopbuy2.png");
+  border-image-slice: 28 28 0 28;
+  border-image-width: 16px 16px 0 16px;
+  border-width: 16px 16px 0 16px;
+  background: #000;
 }
 
 /* ---- Top half: full-width art (background + character) ----
@@ -72,28 +137,56 @@
   white-space: pre-line;
 }
 
-/* ---- Top-right: item info ---- */
+/* ---- Top-right: item info (kept compact so nothing overflows the frame) ---- */
+.info {
+  overflow: hidden;
+}
 .info-title {
-  font-size: 34px;
-  margin-bottom: 12px;
+  font-size: 28px;
+  margin-bottom: 8px;
 }
 .info-blurb {
-  font-size: 24px;
+  font-size: 20px;
+  line-height: 1.2;
   white-space: pre-line;
   opacity: 0.9;
 }
 .info-price {
-  margin-top: 16px;
+  margin-top: 10px;
   color: var(--col-yellow);
-  font-size: 26px;
+  font-size: 22px;
 }
 
-/* ---- Bottom-left: item list ---- */
+/* ---- Left (wide) panel: greeting / item list / dialogue ---- */
+.menu {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.greeting {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  white-space: pre-line;
+  font-size: 30px;
+  line-height: 1.3;
+}
+.dialog-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  white-space: pre-line;
+  font-size: 28px;
+  cursor: pointer;
+}
 .item-list {
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
+  overflow: hidden;
+  font-size: 26px;
 }
 .item-row {
   display: grid;
@@ -117,15 +210,31 @@
   padding-left: 24px;
 }
 
-/* ---- Bottom-right: buy prompt / dialog ---- */
+/* ---- Right panel: command menu (Buy/Talk/Exit) or buy prompt ---- */
 .buy-panel {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+.cmd-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  font-size: 30px;
+}
+.cmd-row {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  align-items: center;
+  cursor: pointer;
+  padding: 2px 4px;
 }
 .buy-text {
   flex: 1;
   white-space: pre-line;
-  font-size: 30px;
+  font-size: 28px;
 }
 .confirm-option {
   display: grid;
@@ -150,7 +259,7 @@
   font-size: 22px;
   opacity: 0.7;
   text-align: right;
-  margin-top: 8px;
+  margin-top: auto;
 }
 
 /* ---- SOUL cursor ---- */
@@ -159,9 +268,10 @@
   font-size: 28px;
   line-height: 1;
 }
+/* native 16x16; show at 2x for a crisp integer scale */
 .heart-sprite {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
 }
 
 /* ---- Shop-closed overlay ---- */

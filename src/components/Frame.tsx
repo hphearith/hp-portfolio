@@ -2,7 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 
 type FrameProps = {
   children: ReactNode;
-  /** set true once /sprites/frame.png exists to use the pixel-art border */
+  /** use the pixel-art border (/sprites/frame.png); on by default */
   sprite?: boolean;
   className?: string;
   style?: CSSProperties;
@@ -11,7 +11,7 @@ type FrameProps = {
 /** Reusable Deltarune-style bordered window. */
 export default function Frame({
   children,
-  sprite = false,
+  sprite = true,
   className = "",
   style,
 }: FrameProps) {

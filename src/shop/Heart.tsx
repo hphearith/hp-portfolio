@@ -3,7 +3,7 @@
  * directly in front of whichever row/option is active, so it "snaps" instantly
  * (authentic Deltarune feel). Drop /sprites/heart.png to use real art.
  */
-export default function Heart({ sprite = false }: { sprite?: boolean }) {
+export default function Heart({ sprite = true }: { sprite?: boolean }) {
   if (sprite) {
     return (
       <img

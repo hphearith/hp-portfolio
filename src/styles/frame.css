@@ -22,16 +22,19 @@
   image-rendering: pixelated;
 }
 
-/* Swap to real pixel-art frame once /sprites/frame.png exists. */
+/* Real pixel-art frame: the Shop Talk single box (shoptalk-clear.png, 640x239,
+   transparent center). The line is ~6px and the sparkle-corner motif ~26px, so
+   the 9-slice corner is 28px. No `fill` -> the center stays transparent and the
+   panel's own black background shows through. round tiles the straight line. */
 .frame--sprite {
   border: 0;
   outline: 0;
   margin: 0;
-  /* slice/width are the sprite's corner size in px — tune to your art */
-  border-image-source: url("/sprites/frame.png");
-  border-image-slice: 8 fill;
-  border-image-width: 8px;
-  border-image-repeat: repeat;
+  border-image-source: url("/sprites/shoptalk.png");
+  border-image-slice: 28;
+  border-image-width: 16px;
+  border-image-repeat: round;
   border-style: solid;
-  border-width: 8px;
+  border-width: 16px;
+  image-rendering: pixelated;
 }

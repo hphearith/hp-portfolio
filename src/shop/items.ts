@@ -17,6 +17,20 @@ export type Project = {
 /** Special non-project row that closes the shop. */
 export const EXIT_ID = "exit";
 
+/** Root command menu (right panel) shown on landing. */
+export const ROOT_COMMANDS = ["Buy", "Talk", "Exit"] as const;
+export const CMD_BUY = 0;
+export const CMD_TALK = 1;
+export const CMD_EXIT = 2;
+
+/** Rouxls greeting shown in the left panel on landing. */
+export const GREETING =
+  "Sup, worm.\nWelcometh to mine\nfine SHOPPE.\nWhat wouldst thou?";
+
+/** Line shown when the player picks Talk. */
+export const TALK_LINE =
+  "Thou wishest to\nCHATTE? With ME?\n...How quainte.\nBuyeth something.";
+
 /**
  * Shop wares = portfolio projects. Edit these with your real work.
  * Keep names short so they fit the menu column like the reference.
