@@ -90,27 +90,67 @@
   background-position: 18px 18px;
   background-size: calc(100% - 36px) calc(100% - 34px);}
 
-/* ---- Top half: full-width art (background + character) ----
+/* ---- Top half: full-width art (character over page background) ----
    Authored at base resolution (1px art = 1 stage unit). Region is ~916x241.
-   Drop /sprites/bg.png for a background; character sits in front. See ASSETS.md. */
+   No bg image: sprites are transparent, page background shows through. */
 .art-layer {
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
-  /* Author bg.png at the box aspect (~916x241, or a clean integer fraction
-     like 458x120 ->2x, 229x60 ->4x) so it fills exactly with no crop or
-     non-integer resample. 100% 100% fills the box; pixelated keeps it crisp. */
-  background: #000 no-repeat;
-  background-image: url("/sprites/bg.png");
-  background-size: 100% 100%;
   image-rendering: pixelated;
 }
-.art-character {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+/* ---- Shopkeeper sway (Rouxls-style idle) ----
+   artbase.png is the static linework; handfoot1-4.png are same-canvas
+   (915x249) overlays, exactly one visible at a time. Timing measured from
+   the chapter 1 shop at 30 FPS: 12f rest, 7f up, 6f foot-higher, 7f down
+   = 32f -> 1067ms; we hold sprite 2 slightly longer (see frame budget
+   below). --sway-loop is the full loop length, tuned by eye. */
+.art-stack {
+  --sway-loop: 600ms;
+  position: relative;
+  width: 100%;
+}
+.art-base,
+.art-frame {
+  display: block;
+  width: 100%;
+  image-rendering: pixelated;
+}
+.art-frame {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+/* Hard cuts: keyframe pairs 0.01% apart, no tweening. Frame budget
+   12 / 9 / 6 / 7 = 34 (sprite 2 holds 2 extra frames vs. the game's 7).
+   Boundaries are cumulative counts / 34: 12->35.29%, 21->61.76%, 27->79.41%. */
+.art-frame--1 { animation: sway-f1 var(--sway-loop) linear infinite; }
+.art-frame--2 { animation: sway-f2 var(--sway-loop) linear infinite; }
+.art-frame--3 { animation: sway-f3 var(--sway-loop) linear infinite; }
+.art-frame--4 { animation: sway-f4 var(--sway-loop) linear infinite; }
+@keyframes sway-f1 {
+  0%, 35.29% { opacity: 1; }
+  35.3%, 100% { opacity: 0; }
+}
+@keyframes sway-f2 {
+  0%, 35.29% { opacity: 0; }
+  35.3%, 61.76% { opacity: 1; }
+  61.77%, 100% { opacity: 0; }
+}
+@keyframes sway-f3 {
+  0%, 61.76% { opacity: 0; }
+  61.77%, 79.41% { opacity: 1; }
+  79.42%, 100% { opacity: 0; }
+}
+@keyframes sway-f4 {
+  0%, 79.41% { opacity: 0; }
+  79.42%, 100% { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .art-frame { animation: none; }
+  .art-frame--1 { opacity: 1; }
 }
 .character-fallback {
   align-self: center;

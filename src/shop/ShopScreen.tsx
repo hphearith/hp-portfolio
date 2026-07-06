@@ -17,7 +17,6 @@ import "./shop.css";
 
 export default function ShopScreen() {
   const [state, dispatch] = useReducer(shopReducer, initialShopState);
-  const [hasCharacter, setHasCharacter] = useState(true);
   const [greetingSkip, setGreetingSkip] = useState(false);
 
   useKeyboardNav(dispatch, !state.closed);
@@ -159,16 +158,26 @@ export default function ShopScreen() {
 
   return (
     <div className="shop-grid">
-      {/* Top half: full-width art layer (bg + optional character sprite). */}
+      {/* Top half: full-width art layer (bg + shopkeeper sway animation).
+          artbase = static linework; handfoot1-4 cut in/out on a fixed loop
+          (timing lives in shop.css, --sway-loop). */}
       <div className="art-layer">
-        {hasCharacter && (
+        <div className="art-stack">
           <img
-            className="art-character"
-            src="/sprites/character.png"
+            className="art-base"
+            src="/sprites/artbase.png"
             alt="The shopkeeper"
-            onError={() => setHasCharacter(false)}
           />
-        )}
+          {[1, 2, 3, 4].map((n) => (
+            <img
+              key={n}
+              className={`art-frame art-frame--${n}`}
+              src={`/sprites/handfoot${n}.png`}
+              alt=""
+              aria-hidden="true"
+            />
+          ))}
+        </div>
       </div>
 
       {/* Top-right: item info box — appears on top in a buy context
