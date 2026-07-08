@@ -252,9 +252,6 @@
   position: absolute;
   display: block;
   cursor: pointer;
-  /* debug: visible hitbox for alignment - remove once confirmed */
-  background: rgba(255, 0, 0, 0.35);
-  border: 1px dashed red;
 }
 .art-hotspot--achma {
   left: 600px; /* 200 * 3 */
