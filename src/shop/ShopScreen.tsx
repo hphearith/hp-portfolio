@@ -271,6 +271,13 @@ export default function ShopScreen() {
             rel="noopener noreferrer"
             aria-label="Wine"
           />
+          <a
+            className="art-hotspot art-hotspot--moon"
+            href="https://ngovkimyou.github.io/Moon---portfolio/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Moon"
+          />
         </div>
       </div>
 

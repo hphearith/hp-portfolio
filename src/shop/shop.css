@@ -274,6 +274,12 @@
   width: 21px; /* (244 - 237) * 3 */
   height: 48px; /* (52 - 36) * 3 */
 }
+.art-hotspot--moon {
+  left: 725px; /* 242 * 3 */
+  top: 21px; /* 7 * 3 */
+  width: 86px; /* (270 - 242) * 3 */
+  height: 66px; /* (29 - 7) * 3 */
+}
 .art-claude {
   position: absolute;
   inset: 0;
