@@ -128,6 +128,38 @@
   inset: 0;
   opacity: 0;
 }
+/* achma.png is a 915x249 canvas but the actual art is a 51x45 blob
+   centered at (649.5,43.5) - crop to a square around that center and
+   rotate the full sheet inside it around the blob's own center so it
+   spins in place. The wrap must circumscribe the blob's rotation
+   diagonal (~68px) or the corners get hard-clipped as it spins (reads
+   as a black edge slicing through / corners vanishing). */
+.art-achma-wrap {
+  position: absolute;
+  left: 606px;
+  top: -2px;
+  width: 88px;
+  height: 88px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.art-achma {
+  position: absolute;
+  left: -606px;
+  top: 1px;
+  width: 915px;
+  max-width: none;
+  image-rendering: pixelated;
+  transform-origin: 649.5px 43.5px;
+  animation: achma-spin 3s linear infinite;
+}
+@keyframes achma-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .art-achma { animation: none; }
+}
 /* Hard cuts: keyframe pairs 0.01% apart, no tweening. Frame budget
    12 / 9 / 6 / 7 = 34 (sprite 2 holds 2 extra frames vs. the game's 7).
    Boundaries are cumulative counts / 34: 12->35.29%, 21->61.76%, 27->79.41%. */
@@ -153,9 +185,31 @@
   0%, 79.41% { opacity: 0; }
   79.42%, 100% { opacity: 1; }
 }
+
+/* ---- Speaker icon (talk indicator) ----
+   Same 915x249 canvas as handfoot, same --sway-loop so it stays on the
+   shopkeeper's beat. 3 hard-cut frames, budget 14/10/10 of 34 -> speaker1
+   hangs noticeably longer than 2 and 3. Boundaries: 14->41.18%, 24->70.59%. */
+.art-speaker--1 { animation: sway-s1 var(--sway-loop) linear infinite; }
+.art-speaker--2 { animation: sway-s2 var(--sway-loop) linear infinite; }
+.art-speaker--3 { animation: sway-s3 var(--sway-loop) linear infinite; }
+@keyframes sway-s1 {
+  0%, 41.18% { opacity: 1; }
+  41.19%, 100% { opacity: 0; }
+}
+@keyframes sway-s2 {
+  0%, 41.18% { opacity: 0; }
+  41.19%, 70.59% { opacity: 1; }
+  70.6%, 100% { opacity: 0; }
+}
+@keyframes sway-s3 {
+  0%, 70.59% { opacity: 0; }
+  70.6%, 100% { opacity: 1; }
+}
 @media (prefers-reduced-motion: reduce) {
   .art-frame { animation: none; }
   .art-frame--1 { opacity: 1; }
+  .art-speaker--1 { opacity: 1; }
 }
 
 /* ---- "Flashy" head glints (Rouxls bling) ----
@@ -191,6 +245,31 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .art-flash { animation: none; }
+}
+.art-claude {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: block;
+  width: 100%;
+  image-rendering: pixelated;
+  animation: claude-shimmy 5.4s ease-in-out infinite;
+}
+/* Random-feeling left/right shimmy, kept within a few px either side. */
+@keyframes claude-shimmy {
+  0% { transform: translateX(0); }
+  12% { transform: translateX(-5px); }
+  23% { transform: translateX(4px); }
+  34% { transform: translateX(-3px); }
+  47% { transform: translateX(7px); }
+  58% { transform: translateX(-7px); }
+  69% { transform: translateX(2px); }
+  81% { transform: translateX(-4px); }
+  92% { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .art-claude { animation: none; }
 }
 .character-fallback {
   align-self: center;

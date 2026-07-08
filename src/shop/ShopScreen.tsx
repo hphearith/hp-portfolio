@@ -24,6 +24,11 @@ import facehappySprite from "../assets/sprites/facehappy.png";
 import facemlemSprite from "../assets/sprites/facemlem.png";
 import faceneutralSprite from "../assets/sprites/faceneutral.png";
 import facepoutSprite from "../assets/sprites/facepout.png";
+import achmaSprite from "../assets/sprites/achma.png";
+import claudeSprite from "../assets/sprites/claude.png";
+import speaker1Sprite from "../assets/sprites/speaker1.png";
+import speaker2Sprite from "../assets/sprites/speaker2.png";
+import speaker3Sprite from "../assets/sprites/speaker3.png";
 
 const HANDFOOT_SPRITES = [
   handfoot1Sprite,
@@ -31,6 +36,8 @@ const HANDFOOT_SPRITES = [
   handfoot3Sprite,
   handfoot4Sprite,
 ];
+
+const SPEAKER_SPRITES = [speaker1Sprite, speaker2Sprite, speaker3Sprite];
 
 // Faces shown while a dialogue line is up (picked off the line's own i18n
 // key so the same line always shows the same face). facebase.png is the
@@ -200,6 +207,12 @@ export default function ShopScreen() {
       <div className="art-layer">
         <div className="art-stack">
           <img
+            className="art-claude"
+            src={claudeSprite}
+            alt=""
+            aria-hidden="true"
+          />
+          <img
             className="art-base"
             src={artbaseSprite}
             alt={t("aria.shopkeeper")}
@@ -219,6 +232,18 @@ export default function ShopScreen() {
               aria-hidden="true"
             />
           ))}
+          {[1, 2, 3].map((n) => (
+            <img
+              key={n}
+              className={`art-frame art-speaker art-speaker--${n}`}
+              src={SPEAKER_SPRITES[n - 1]}
+              alt=""
+              aria-hidden="true"
+            />
+          ))}
+          <div className="art-achma-wrap" aria-hidden="true">
+            <img className="art-achma" src={achmaSprite} alt="" />
+          </div>
           {/* "Flashy" glints popping beside the head (flash1/2.png,
               timing in shop.css .art-flash) */}
           <div className="art-flash art-flash--left" aria-hidden="true" />
