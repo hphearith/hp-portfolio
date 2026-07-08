@@ -1,19 +1,21 @@
 import { Howl } from "howler";
 import squeakSfx from "../assets/sfx/squeak.ogg";
 import selectSfx from "../assets/sfx/select.ogg";
+import buyItemSfx from "../assets/sfx/buyitem.ogg";
 import bgmSfx from "../assets/sfx/bgm.ogg";
 
 /*
  * Howler auto-unlocks the audio context on the first user gesture by default.
  */
 
-export type SfxName = "move" | "select" | "cancel" | "squeak";
+export type SfxName = "move" | "select" | "cancel" | "squeak" | "buy";
 
 const SOURCES: Record<SfxName, string> = {
   move: squeakSfx,
   select: selectSfx,
   cancel: squeakSfx,
   squeak: squeakSfx,
+  buy: buyItemSfx,
 };
 
 let sounds: Partial<Record<SfxName, Howl>> | null = null;

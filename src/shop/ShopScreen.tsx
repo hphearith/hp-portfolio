@@ -65,7 +65,8 @@ export default function ShopScreen() {
   const [muted, setMuted] = useState(isMuted());
 
   // speaker sprite freezes on speaker1 (no cycling) while music is muted
-  useEffect(() => subscribeMuted(setMuted), []);
+  // subscribeMuted may return a boolean; call it inside effect and ignore return
+  useEffect(() => { subscribeMuted(setMuted); }, []);
 
   useKeyboardNav(dispatch);
 
@@ -87,6 +88,7 @@ export default function ShopScreen() {
   const prevConfirm = useRef(state.confirmYes);
   const prevSelectTick = useRef(state.selectTick);
   const prevItemsIndex = useRef(state.itemsIndex);
+  const prevOwnedCount = useRef(state.ownedIds.length);
 
   useEffect(() => {
     if (state.phase === "root" && state.rootIndex !== prevRoot.current) {
@@ -118,6 +120,14 @@ export default function ShopScreen() {
     }
     prevConfirm.current = state.confirmYes;
   }, [state.confirmYes, state.phase]);
+
+  // "buy" jingle fires the moment a purchase actually lands (ownedIds grows).
+  useEffect(() => {
+    if (state.ownedIds.length > prevOwnedCount.current) {
+      playSfx("buy");
+    }
+    prevOwnedCount.current = state.ownedIds.length;
+  }, [state.ownedIds.length]);
 
   // "select" ding on every committed menu selection (Buy / Talk / Exit /
   // items / Yes / No / topics). The reducer bumps selectTick on each.
