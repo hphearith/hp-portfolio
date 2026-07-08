@@ -113,10 +113,15 @@
   width: 100%;
 }
 .art-base,
+.art-face,
 .art-frame {
   display: block;
   width: 100%;
   image-rendering: pixelated;
+}
+.art-face {
+  position: absolute;
+  inset: 0;
 }
 .art-frame {
   position: absolute;

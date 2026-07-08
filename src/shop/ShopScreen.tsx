@@ -19,6 +19,11 @@ import handfoot1Sprite from "../assets/sprites/handfoot1.png";
 import handfoot2Sprite from "../assets/sprites/handfoot2.png";
 import handfoot3Sprite from "../assets/sprites/handfoot3.png";
 import handfoot4Sprite from "../assets/sprites/handfoot4.png";
+import facebaseSprite from "../assets/sprites/facebase.png";
+import facehappySprite from "../assets/sprites/facehappy.png";
+import facemlemSprite from "../assets/sprites/facemlem.png";
+import faceneutralSprite from "../assets/sprites/faceneutral.png";
+import facepoutSprite from "../assets/sprites/facepout.png";
 
 const HANDFOOT_SPRITES = [
   handfoot1Sprite,
@@ -26,6 +31,24 @@ const HANDFOOT_SPRITES = [
   handfoot3Sprite,
   handfoot4Sprite,
 ];
+
+// Faces shown while a dialogue line is up (picked off the line's own i18n
+// key so the same line always shows the same face). facebase.png is the
+// idle default whenever no dialogue is active.
+const DIALOG_FACE_SPRITES = [
+  faceneutralSprite,
+  facehappySprite,
+  facemlemSprite,
+  facepoutSprite,
+];
+
+function faceForDialog(dialogKey: string) {
+  let hash = 0;
+  for (let i = 0; i < dialogKey.length; i++) {
+    hash = (hash * 31 + dialogKey.charCodeAt(i)) >>> 0;
+  }
+  return DIALOG_FACE_SPRITES[hash % DIALOG_FACE_SPRITES.length];
+}
 
 export default function ShopScreen() {
   const { t } = useTranslation();
@@ -180,6 +203,12 @@ export default function ShopScreen() {
             className="art-base"
             src={artbaseSprite}
             alt={t("aria.shopkeeper")}
+          />
+          <img
+            className="art-face"
+            src={state.dialog ? faceForDialog(state.dialog) : facebaseSprite}
+            alt=""
+            aria-hidden="true"
           />
           {[1, 2, 3, 4].map((n) => (
             <img
