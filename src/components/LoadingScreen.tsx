@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import "./loading.css";
 
@@ -10,6 +10,13 @@ const LOAD_DURATION_MS = 1800;
 export default function LoadingScreen({ onEnter }: { onEnter: () => void }) {
   const { t } = useTranslation();
   const [ready, setReady] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
+
+  // Auto-focus the Enter button so a plain Enter/Space press (no mouse)
+  // activates it via the browser's native button behavior.
+  useEffect(() => {
+    if (ready) btnRef.current?.focus();
+  }, [ready]);
 
   return (
     <div className="loading-overlay">
@@ -21,7 +28,12 @@ export default function LoadingScreen({ onEnter }: { onEnter: () => void }) {
         />
       </div>
       {ready && (
-        <button type="button" className="enter-btn" onClick={onEnter}>
+        <button
+          ref={btnRef}
+          type="button"
+          className="enter-btn"
+          onClick={onEnter}
+        >
           {t("loading.enter")}
         </button>
       )}

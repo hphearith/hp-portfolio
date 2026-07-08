@@ -58,7 +58,7 @@ function faceForDialog(dialogKey: string) {
   return DIALOG_FACE_SPRITES[hash % DIALOG_FACE_SPRITES.length];
 }
 
-export default function ShopScreen() {
+export default function ShopScreen({ active = true }: { active?: boolean }) {
   const { t } = useTranslation();
   const [state, dispatch] = useReducer(shopReducer, initialShopState);
   const [greetingSkip, setGreetingSkip] = useState(false);
@@ -68,7 +68,9 @@ export default function ShopScreen() {
   // subscribeMuted may return a boolean; call it inside effect and ignore return
   useEffect(() => { subscribeMuted(setMuted); }, []);
 
-  useKeyboardNav(dispatch);
+  // input (keyboard + tap) is gated off while the loading screen sits on top,
+  // so pressing Enter/Z/arrows there can't move or select anything underneath.
+  useKeyboardNav(dispatch, active);
 
   // warm up audio once
   useEffect(() => {
@@ -162,32 +164,34 @@ export default function ShopScreen() {
   const onItemsExit = state.itemsIndex === ownedProjects.length;
   const selectedOwned = ownedProjects[state.itemsIndex];
 
-  // tap-to-navigate (mobile + mouse): first tap points, second selects
+  // tap-to-navigate (mobile + mouse): first tap points, second selects.
+  // Every tap handler bails out while `active` is false (loading screen up).
   function tapItem(index: number) {
-    if (state.phase !== "buy") return;
+    if (!active || state.phase !== "buy") return;
     if (state.itemIndex === index) dispatch({ type: "SELECT" });
     else dispatch({ type: "POINT_AT", index });
   }
 
   function tapRoot(index: number) {
-    if (state.phase !== "root") return;
+    if (!active || state.phase !== "root") return;
     if (state.rootIndex === index) dispatch({ type: "SELECT" });
     else dispatch({ type: "POINT_ROOT", index });
   }
 
   function tapConfirm(yes: boolean) {
+    if (!active) return;
     dispatch({ type: "SET_CONFIRM", yes });
     dispatch({ type: "SELECT" });
   }
 
   function tapTalk(index: number) {
-    if (state.phase !== "talk") return;
+    if (!active || state.phase !== "talk") return;
     if (state.talkIndex === index) dispatch({ type: "SELECT" });
     else dispatch({ type: "POINT_TALK", index });
   }
 
   function tapItems(index: number) {
-    if (state.phase !== "items") return;
+    if (!active || state.phase !== "items") return;
     if (state.itemsIndex === index) dispatch({ type: "SELECT" });
     else dispatch({ type: "POINT_ITEMS", index });
   }

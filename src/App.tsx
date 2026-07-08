@@ -39,7 +39,7 @@ export default function App() {
   return (
     <>
       <div className="stage" ref={stageRef}>
-        <ShopScreen />
+        <ShopScreen active={entered} />
         {!entered && <LoadingScreen onEnter={handleEnter} />}
       </div>
 
