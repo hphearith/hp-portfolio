@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { isMuted, toggleMute } from "../audio/sfx";
+import muteSprite from "../assets/sprites/mute.png";
+import unmuteSprite from "../assets/sprites/unmute.png";
 
 /** Fixed top-right mute toggle. Swaps mute/unmute sprite on click. */
 export default function MuteButton() {
@@ -15,7 +17,7 @@ export default function MuteButton() {
       onClick={() => setMuted(toggleMute())}
     >
       <img
-        src={muted ? "/sprites/unmute.png" : "/sprites/mute.png"}
+        src={muted ? unmuteSprite : muteSprite}
         alt=""
         draggable={false}
       />

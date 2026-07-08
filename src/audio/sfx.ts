@@ -1,18 +1,19 @@
 import { Howl } from "howler";
+import squeakSfx from "../assets/sfx/squeak.ogg";
+import selectSfx from "../assets/sfx/select.ogg";
+import bgmSfx from "../assets/sfx/bgm.ogg";
 
 /*
- * Drop blip files into /public/sfx/ (wav or ogg). Until they exist these Howls
- * just fail to load silently — calls to playSfx are no-ops, nothing crashes.
  * Howler auto-unlocks the audio context on the first user gesture by default.
  */
 
 export type SfxName = "move" | "select" | "cancel" | "squeak";
 
 const SOURCES: Record<SfxName, string> = {
-  move: "/sfx/squeak.ogg",
-  select: "/sfx/select.ogg",
-  cancel: "/sfx/squeak.ogg",
-  squeak: "/sfx/squeak.ogg",
+  move: squeakSfx,
+  select: selectSfx,
+  cancel: squeakSfx,
+  squeak: squeakSfx,
 };
 
 let sounds: Partial<Record<SfxName, Howl>> | null = null;
@@ -42,7 +43,7 @@ let bgm: Howl | null = null;
 function ensureBgm() {
   if (bgm) return bgm;
   bgm = new Howl({
-    src: ["/sfx/bgm.ogg"],
+    src: [bgmSfx],
     loop: true,
     volume: 0.35,
     html5: true,

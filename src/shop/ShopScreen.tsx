@@ -14,6 +14,18 @@ import {
 } from "./items";
 import { initialShopState, shopReducer, BUY_EXIT_INDEX } from "./shopReducer";
 import "./shop.css";
+import artbaseSprite from "../assets/sprites/artbase.png";
+import handfoot1Sprite from "../assets/sprites/handfoot1.png";
+import handfoot2Sprite from "../assets/sprites/handfoot2.png";
+import handfoot3Sprite from "../assets/sprites/handfoot3.png";
+import handfoot4Sprite from "../assets/sprites/handfoot4.png";
+
+const HANDFOOT_SPRITES = [
+  handfoot1Sprite,
+  handfoot2Sprite,
+  handfoot3Sprite,
+  handfoot4Sprite,
+];
 
 export default function ShopScreen() {
   const { t } = useTranslation();
@@ -166,14 +178,14 @@ export default function ShopScreen() {
         <div className="art-stack">
           <img
             className="art-base"
-            src="/sprites/artbase.png"
+            src={artbaseSprite}
             alt={t("aria.shopkeeper")}
           />
           {[1, 2, 3, 4].map((n) => (
             <img
               key={n}
               className={`art-frame art-frame--${n}`}
-              src={`/sprites/handfoot${n}.png`}
+              src={HANDFOOT_SPRITES[n - 1]}
               alt=""
               aria-hidden="true"
             />

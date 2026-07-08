@@ -77,7 +77,7 @@
    This fills right up to the frame line with no green gap and no outside spill,
    while keeping border-width:40 so the text stays inset and the frame is intact. */
 .info.info--buyframe {
-  border-image-source: url("/sprites/shoptalk.png");
+  border-image-source: url("../assets/sprites/shoptalk.png");
   border-image-slice: 28;
   border-image-width: 40px;
   border-width: 40px;
@@ -163,7 +163,7 @@
   position: absolute;
   width: 24px;
   height: 48px;
-  background-image: url("/sprites/flash1.png");
+  background-image: url("../assets/sprites/flash1.png");
   background-size: 100% 100%;
   image-rendering: pixelated;
   opacity: 0;
@@ -180,8 +180,8 @@
   animation-delay: -0.75s;
 }
 @keyframes flash-blink {
-  0%, 6.99% { opacity: 1; background-image: url("/sprites/flash1.png"); }
-  7%, 13.99% { opacity: 1; background-image: url("/sprites/flash2.png"); }
+  0%, 6.99% { opacity: 1; background-image: url("../assets/sprites/flash1.png"); }
+  7%, 13.99% { opacity: 1; background-image: url("../assets/sprites/flash2.png"); }
   14%, 100% { opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {

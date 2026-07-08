@@ -4,9 +4,9 @@
  * DEFAULT (.frame): pure-CSS placeholder — a Deltarune-ish white double line.
  * Works with zero assets so the layout is visible immediately.
  *
- * FINAL (.frame--sprite): drop your pixel-art frame at /sprites/frame.png
- * (9-slice with decorative corners) and add the `frame--sprite` class. The
- * border-image + pixelated rendering keep it crisp at any scale. See plan.
+ * FINAL (.frame--sprite): 9-slice pixel-art frame with decorative corners,
+ * applied via the `frame--sprite` class. The border-image + pixelated
+ * rendering keep it crisp at any scale.
  */
 
 .frame {
@@ -30,7 +30,7 @@
   border: 0;
   outline: 0;
   margin: 0;
-  border-image-source: url("/sprites/shoptalk.png");
+  border-image-source: url("../assets/sprites/shoptalk.png");
   border-image-slice: 28;
   border-image-width: 40px;
   border-image-repeat: round;

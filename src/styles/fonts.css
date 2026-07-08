@@ -1,7 +1,4 @@
 /*
- * Drop the real pixel fonts into /public/fonts/ then these @font-face rules
- * pick them up. Until then the monospace/cursive fallbacks keep things readable.
- *
  * Recommended (personal / non-commercial use, credit Toby Fox):
  *   PixelMono  -> "Determination Mono" or "8bitoperator" (main shop text)
  *   JF14       -> jf14-regular.ttf, a JF-Dot pixel font covering kana/kanji
@@ -15,13 +12,13 @@
 
 @font-face {
   font-family: "PixelMono";
-  src: url("/fonts/DeterminationMonoWeb.woff") format("woff");
+  src: url("../assets/fonts/DeterminationMonoWeb.woff") format("woff");
   font-display: swap;
 }
 
 @font-face {
   font-family: "JF14";
-  src: url("/fonts/jf14-regular.ttf") format("truetype");
+  src: url("../assets/fonts/jf14-regular.ttf") format("truetype");
   font-display: swap;
 }
 
