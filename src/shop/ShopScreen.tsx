@@ -12,6 +12,7 @@ import {
   TALK_TOPIC_COUNT,
   TALK_EXIT_INDEX,
 } from "./items";
+import type { Project } from "./items";
 import { initialShopState, shopReducer, BUY_EXIT_INDEX } from "./shopReducer";
 import "./shop.css";
 import artbaseSprite from "../assets/sprites/artbase.png";
@@ -62,7 +63,7 @@ export default function ShopScreen() {
   const [state, dispatch] = useReducer(shopReducer, initialShopState);
   const [greetingSkip, setGreetingSkip] = useState(false);
 
-  useKeyboardNav(dispatch, !state.closed);
+  useKeyboardNav(dispatch);
 
   // warm up audio once
   useEffect(() => {
@@ -81,6 +82,7 @@ export default function ShopScreen() {
   const prevItem = useRef(state.itemIndex);
   const prevConfirm = useRef(state.confirmYes);
   const prevSelectTick = useRef(state.selectTick);
+  const prevItemsIndex = useRef(state.itemsIndex);
 
   useEffect(() => {
     if (state.phase === "root" && state.rootIndex !== prevRoot.current) {
@@ -97,7 +99,17 @@ export default function ShopScreen() {
   }, [state.itemIndex, state.phase]);
 
   useEffect(() => {
-    if (state.phase === "confirm" && state.confirmYes !== prevConfirm.current) {
+    if (state.phase === "items" && state.itemsIndex !== prevItemsIndex.current) {
+      playSfx("move");
+    }
+    prevItemsIndex.current = state.itemsIndex;
+  }, [state.itemsIndex, state.phase]);
+
+  useEffect(() => {
+    if (
+      (state.phase === "confirm" || state.phase === "itemOpen") &&
+      state.confirmYes !== prevConfirm.current
+    ) {
       playSfx("move");
     }
     prevConfirm.current = state.confirmYes;
@@ -129,11 +141,12 @@ export default function ShopScreen() {
   const selected = PROJECTS[state.itemIndex];
   const onBuyExit = state.itemIndex === BUY_EXIT_INDEX;
 
-  // The info box pops up (and sits) whenever there's an item in context.
-  const infoOpen =
-    state.phase === "buy" ||
-    state.phase === "confirm" ||
-    (state.phase === "dialog" && state.dialogReturn === "buy");
+  // owned (purchased) projects shown on the Items screen
+  const ownedProjects: Project[] = PROJECTS.filter((p) =>
+    state.ownedIds.includes(p.id)
+  );
+  const onItemsExit = state.itemsIndex === ownedProjects.length;
+  const selectedOwned = ownedProjects[state.itemsIndex];
 
   // tap-to-navigate (mobile + mouse): first tap points, second selects
   function tapItem(index: number) {
@@ -159,19 +172,10 @@ export default function ShopScreen() {
     else dispatch({ type: "POINT_TALK", index });
   }
 
-  if (state.closed) {
-    return (
-      <div className="closed-overlay">
-        <p>{t("closed.line")}</p>
-        <button
-          type="button"
-          className="reopen-btn"
-          onClick={() => dispatch({ type: "REOPEN" })}
-        >
-          {t("closed.reopen")}
-        </button>
-      </div>
-    );
+  function tapItems(index: number) {
+    if (state.phase !== "items") return;
+    if (state.itemsIndex === index) dispatch({ type: "SELECT" });
+    else dispatch({ type: "POINT_ITEMS", index });
   }
 
   // talk = single full-width box ("shoptalk"); other phases use the two
@@ -183,7 +187,21 @@ export default function ShopScreen() {
   // buy-ish phases show the item list + the info box on top.
   const buyish =
     state.phase === "buy" || state.phase === "confirm" || buyDialog;
+  // items-ish phases show the owned-items list + the info box on top.
+  const itemsish = state.phase === "items" || state.phase === "itemOpen";
   const showItemList = buyish;
+
+  // The info box pops up (and sits) whenever there's an item in context.
+  const infoOpen = buyish || itemsish;
+  const infoProject = buyish
+    ? onBuyExit
+      ? undefined
+      : selected
+    : itemsish
+    ? onItemsExit
+      ? undefined
+      : selectedOwned
+    : undefined;
 
   const dialogEl = (
     <div className="dialog-box" onClick={() => dispatch({ type: "ADVANCE" })}>
@@ -285,14 +303,14 @@ export default function ShopScreen() {
           (shoptalk frame, no slide). */}
       <Frame
         className={`panel info${infoOpen ? " info--open" : ""}${
-          buyish ? " info--buyframe" : ""
+          buyish || itemsish ? " info--buyframe" : ""
         }`}
       >
-        {selected ? (
+        {infoProject ? (
           <>
-            <div className="info-title">{t(`projects.${selected.id}.name`)}</div>
-            <div className="info-blurb">{t(`projects.${selected.id}.blurb`)}</div>
-            <div className="info-price">{selected.price}$</div>
+            <div className="info-title">{t(`projects.${infoProject.id}.name`)}</div>
+            <div className="info-blurb">{t(`projects.${infoProject.id}.blurb`)}</div>
+            {buyish && <div className="info-price">{infoProject.price}$</div>}
           </>
         ) : (
           <>
@@ -310,21 +328,28 @@ export default function ShopScreen() {
       <Frame className="panel menu">
         {showItemList ? (
           <div className="item-list" role="menu" aria-label={t("aria.shopItems")}>
-            {PROJECTS.map((p, i) => (
-              <div
-                key={p.id}
-                className="item-row"
-                role="menuitem"
-                aria-current={state.itemIndex === i ? "true" : undefined}
-                onClick={() => tapItem(i)}
-              >
-                <span className="item-cursor">
-                  {state.itemIndex === i && state.phase === "buy" && <Heart />}
-                </span>
-                <span className="item-name">{t(`projects.${p.id}.name`)}</span>
-                <span className="item-price">{p.price}$</span>
-              </div>
-            ))}
+            {PROJECTS.map((p, i) => {
+              const owned = state.ownedIds.includes(p.id);
+              return (
+                <div
+                  key={p.id}
+                  className={`item-row${owned ? " item-row--sold-out" : ""}`}
+                  role="menuitem"
+                  aria-current={state.itemIndex === i ? "true" : undefined}
+                  aria-disabled={owned ? "true" : undefined}
+                  onClick={() => tapItem(i)}
+                >
+                  <span className="item-cursor">
+                    {state.itemIndex === i && state.phase === "buy" && <Heart />}
+                  </span>
+                  <span className="item-name">
+                    {t(`projects.${p.id}.name`)}
+                    {owned ? ` ${t("items.soldOut")}` : ""}
+                  </span>
+                  <span className="item-price">{p.price}$</span>
+                </div>
+              );
+            })}
             {/* Exit row: backs out of the item list to the command menu */}
             <div
               className="item-row"
@@ -334,6 +359,44 @@ export default function ShopScreen() {
             >
               <span className="item-cursor">
                 {onBuyExit && state.phase === "buy" && <Heart />}
+              </span>
+              <span className="item-name">{t("commands.exit")}</span>
+              <span className="item-price" />
+            </div>
+          </div>
+        ) : itemsish ? (
+          <div className="item-list" role="menu" aria-label={t("aria.itemsList")}>
+            {ownedProjects.length === 0 && (
+              <div className="item-row item-row--empty">
+                <span className="item-cursor" />
+                <span className="item-name">{t("items.empty")}</span>
+                <span className="item-price" />
+              </div>
+            )}
+            {ownedProjects.map((p, i) => (
+              <div
+                key={p.id}
+                className="item-row"
+                role="menuitem"
+                aria-current={state.itemsIndex === i ? "true" : undefined}
+                onClick={() => tapItems(i)}
+              >
+                <span className="item-cursor">
+                  {state.itemsIndex === i && state.phase === "items" && <Heart />}
+                </span>
+                <span className="item-name">{t(`projects.${p.id}.name`)}</span>
+                <span className="item-price" />
+              </div>
+            ))}
+            {/* Exit row: backs out of the items list to the command menu */}
+            <div
+              className="item-row"
+              role="menuitem"
+              aria-current={onItemsExit ? "true" : undefined}
+              onClick={() => tapItems(ownedProjects.length)}
+            >
+              <span className="item-cursor">
+                {onItemsExit && state.phase === "items" && <Heart />}
               </span>
               <span className="item-name">{t("commands.exit")}</span>
               <span className="item-price" />
@@ -392,6 +455,26 @@ export default function ShopScreen() {
         {state.phase === "confirm" ? (
           <div className="buy-text">
             <div>{t("confirm.prompt", { price: selected.price })}</div>
+            <div
+              className="confirm-option"
+              role="button"
+              onClick={() => tapConfirm(true)}
+            >
+              <span className="item-cursor">{state.confirmYes && <Heart />}</span>
+              <span>{t("confirm.yes")}</span>
+            </div>
+            <div
+              className="confirm-option"
+              role="button"
+              onClick={() => tapConfirm(false)}
+            >
+              <span className="item-cursor">{!state.confirmYes && <Heart />}</span>
+              <span>{t("confirm.no")}</span>
+            </div>
+          </div>
+        ) : state.phase === "itemOpen" ? (
+          <div className="buy-text">
+            <div>{t("items.openPrompt")}</div>
             <div
               className="confirm-option"
               role="button"

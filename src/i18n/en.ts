@@ -12,6 +12,7 @@ export const en = {
       buy: "Buy",
       talk: "Talk",
       exit: "Exit",
+      items: "Items",
     },
 
     confirm: {
@@ -29,9 +30,10 @@ export const en = {
       space: "Space: 12",
     },
 
-    closed: {
-      line: "Thou hast left mine shoppe.",
-      reopen: "Re-entereth",
+    items: {
+      soldOut: "(SOLD OUT)",
+      empty: "Thou hast bought\nnaught yet, worm.",
+      openPrompt: "Openeth it,\nworm?",
     },
 
     loading: {
@@ -84,6 +86,7 @@ export const en = {
 
     aria: {
       shopItems: "Shop items",
+      itemsList: "Purchased items",
       talkTopics: "Talk topics",
       shopActions: "Shop actions",
       shopkeeper: "The shopkeeper",

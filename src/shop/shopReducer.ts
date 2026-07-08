@@ -6,18 +6,27 @@ export const ITEM_COUNT = PROJECTS.length;
 export const BUY_EXIT_INDEX = ITEM_COUNT;
 /** total selectable rows in the buy list (projects + Exit) */
 export const BUY_ROWS = ITEM_COUNT + 1;
-/** number of root command rows (Buy / Talk / Exit) */
+/** number of root command rows (Buy / Talk / Items) */
 export const ROOT_COUNT = ROOT_COMMANDS.length;
 
 /**
  * Two-level shop, Deltarune-style:
- *   root    -> heart on the right command menu (Buy / Talk / Exit)
- *   buy     -> heart in the left item list (info box pops up + sits)
- *   confirm -> Yes / No on the right
- *   dialog  -> Rouxls typewriter line; returns to where it came from
- *   talk    -> conversation topic menu (About yourself / experience / etc.)
+ *   root       -> heart on the right command menu (Buy / Talk / Items)
+ *   buy        -> heart in the left item list (info box pops up + sits)
+ *   confirm    -> Yes / No on the right (buying)
+ *   dialog     -> Rouxls typewriter line; returns to where it came from
+ *   talk       -> conversation topic menu (About yourself / experience / etc.)
+ *   items      -> heart in the left list of owned (purchased) items
+ *   itemOpen   -> Yes / No on the right ("Open?" — opening not wired up yet)
  */
-export type Phase = "root" | "buy" | "confirm" | "dialog" | "talk";
+export type Phase =
+  | "root"
+  | "buy"
+  | "confirm"
+  | "dialog"
+  | "talk"
+  | "items"
+  | "itemOpen";
 
 export type ShopState = {
   phase: Phase;
@@ -35,14 +44,16 @@ export type ShopState = {
   pendingLink: string | null;
   /** set for one tick when a link should actually be opened (side effect) */
   linkToOpen: string | null;
-  /** true once Exit is chosen */
-  closed: boolean;
   /** false while dialog text is typing; true once revealed or skipped */
   dialogReady: boolean;
   /** highlighted talk topic 0..TALK_EXIT_INDEX (talk phase) */
   talkIndex: number;
   /** bumped on every committed menu selection — drives the "select" sfx */
   selectTick: number;
+  /** ids of purchased projects (one stock each — sold out once bought) */
+  ownedIds: string[];
+  /** highlighted row 0..ownedIds.length in the items list (items phase) */
+  itemsIndex: number;
 };
 
 export const initialShopState: ShopState = {
@@ -54,10 +65,11 @@ export const initialShopState: ShopState = {
   dialogReturn: "root",
   pendingLink: null,
   linkToOpen: null,
-  closed: false,
   dialogReady: true,
   talkIndex: 0,
   selectTick: 0,
+  ownedIds: [],
+  itemsIndex: 0,
 };
 
 export type ShopAction =
@@ -69,9 +81,9 @@ export type ShopAction =
   | { type: "POINT_ROOT"; index: number }
   | { type: "POINT_AT"; index: number }
   | { type: "POINT_TALK"; index: number }
+  | { type: "POINT_ITEMS"; index: number }
   | { type: "SET_CONFIRM"; yes: boolean }
   | { type: "CLEAR_LINK" }
-  | { type: "REOPEN" }
   | { type: "DIALOG_SKIP" };
 
 const wrap = (n: number, len: number) => ((n % len) + len) % len;
@@ -81,9 +93,6 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
     case "CLEAR_LINK":
       return { ...state, linkToOpen: null };
 
-    case "REOPEN":
-      return { ...initialShopState };
-
     case "MOVE_UP":
       if (state.phase === "root") {
         return { ...state, rootIndex: wrap(state.rootIndex - 1, ROOT_COUNT) };
@@ -91,11 +100,15 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
       if (state.phase === "buy") {
         return { ...state, itemIndex: wrap(state.itemIndex - 1, BUY_ROWS) };
       }
-      if (state.phase === "confirm") {
+      if (state.phase === "confirm" || state.phase === "itemOpen") {
         return { ...state, confirmYes: !state.confirmYes };
       }
       if (state.phase === "talk") {
         return { ...state, talkIndex: wrap(state.talkIndex - 1, TALK_ROWS) };
+      }
+      if (state.phase === "items") {
+        const rows = state.ownedIds.length + 1;
+        return { ...state, itemsIndex: wrap(state.itemsIndex - 1, rows) };
       }
       return state;
 
@@ -106,11 +119,15 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
       if (state.phase === "buy") {
         return { ...state, itemIndex: wrap(state.itemIndex + 1, BUY_ROWS) };
       }
-      if (state.phase === "confirm") {
+      if (state.phase === "confirm" || state.phase === "itemOpen") {
         return { ...state, confirmYes: !state.confirmYes };
       }
       if (state.phase === "talk") {
         return { ...state, talkIndex: wrap(state.talkIndex + 1, TALK_ROWS) };
+      }
+      if (state.phase === "items") {
+        const rows = state.ownedIds.length + 1;
+        return { ...state, itemsIndex: wrap(state.itemsIndex + 1, rows) };
       }
       return state;
 
@@ -132,8 +149,14 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
       }
       return state;
 
+    case "POINT_ITEMS":
+      if (state.phase === "items" && action.index < state.ownedIds.length + 1) {
+        return { ...state, itemsIndex: action.index };
+      }
+      return state;
+
     case "SET_CONFIRM":
-      if (state.phase === "confirm") {
+      if (state.phase === "confirm" || state.phase === "itemOpen") {
         return { ...state, confirmYes: action.yes };
       }
       return state;
@@ -168,6 +191,9 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
       if (state.phase === "confirm") {
         return { ...state, phase: "buy" };
       }
+      if (state.phase === "itemOpen") {
+        return { ...state, phase: "items" };
+      }
       if (state.phase === "dialog") {
         return dismissDialog(state);
       }
@@ -176,6 +202,9 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
       }
       if (state.phase === "buy") {
         // back out of the item list to the root command menu
+        return { ...state, phase: "root" };
+      }
+      if (state.phase === "items") {
         return { ...state, phase: "root" };
       }
       return state;
@@ -197,13 +226,18 @@ function selectInMenu(state: ShopState): ShopState {
     if (state.rootIndex === CMD_TALK) {
       return { ...state, phase: "talk", talkIndex: 0 };
     }
-    // Exit
-    return { ...state, closed: true };
+    // Items
+    return { ...state, phase: "items", itemsIndex: 0 };
   }
   if (state.phase === "buy") {
     // the Exit row at the bottom backs out to the root command menu
     if (state.itemIndex === BUY_EXIT_INDEX) {
       return { ...state, phase: "root" };
+    }
+    const project = PROJECTS[state.itemIndex];
+    // sold out (one stock, already owned) — not selectable
+    if (state.ownedIds.includes(project.id)) {
+      return state;
     }
     // open the buy prompt, default cursor on Yes
     return { ...state, phase: "confirm", confirmYes: true };
@@ -218,6 +252,7 @@ function selectInMenu(state: ShopState): ShopState {
         dialogReturn: "buy",
         pendingLink: project.link,
         dialogReady: false,
+        ownedIds: [...state.ownedIds, project.id],
       };
     }
     // "No" -> back to the list
@@ -234,6 +269,17 @@ function selectInMenu(state: ShopState): ShopState {
       dialogReturn: "talk",
       dialogReady: false,
     };
+  }
+  if (state.phase === "items") {
+    // the Exit row at the bottom backs out to the root command menu
+    if (state.itemsIndex === state.ownedIds.length) {
+      return { ...state, phase: "root" };
+    }
+    return { ...state, phase: "itemOpen", confirmYes: true };
+  }
+  if (state.phase === "itemOpen") {
+    // Opening isn't wired up yet either way — just return to the item list.
+    return { ...state, phase: "items" };
   }
   return state;
 }

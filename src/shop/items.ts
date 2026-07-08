@@ -13,18 +13,15 @@ export type Project = {
   thumb?: string;
 };
 
-/** Special non-project row that closes the shop. */
-export const EXIT_ID = "exit";
-
 /** Root command menu (right panel) shown on landing — i18n keys. */
 export const ROOT_COMMANDS = [
   "commands.buy",
   "commands.talk",
-  "commands.exit",
+  "commands.items",
 ] as const;
 export const CMD_BUY = 0;
 export const CMD_TALK = 1;
-export const CMD_EXIT = 2;
+export const CMD_ITEMS = 2;
 
 /** Number of talk topics (labels/texts live in the i18n files). */
 export const TALK_TOPIC_COUNT = 4;

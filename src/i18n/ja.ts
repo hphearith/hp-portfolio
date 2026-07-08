@@ -18,6 +18,7 @@ export const ja = {
       buy: "かう",
       talk: "はなす",
       exit: "でる",
+      items: "どうぐ",
     },
 
     confirm: {
@@ -35,9 +36,10 @@ export const ja = {
       space: "スペース: 12",
     },
 
-    closed: {
-      line: "おぬしはわが店を去ったのだ。",
-      reopen: "再入店いたせ",
+    items: {
+      soldOut: "（うりきれ）",
+      empty: "まだ何も\n買っておらぬな、ミミズよ。",
+      openPrompt: "あけるでござるか、\nミミズよ？",
     },
 
     loading: {
@@ -90,6 +92,7 @@ export const ja = {
 
     aria: {
       shopItems: "商品リスト",
+      itemsList: "購入したどうぐ",
       talkTopics: "会話の話題",
       shopActions: "ショップ操作",
       shopkeeper: "店主",
