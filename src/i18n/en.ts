@@ -34,6 +34,10 @@ export const en = {
       reopen: "Re-entereth",
     },
 
+    loading: {
+      enter: "Enter",
+    },
+
     talk: {
       topics: [
         {

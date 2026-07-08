@@ -1,0 +1,77 @@
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  background: var(--col-bg);
+}
+
+.loading-bar-track {
+  width: 60%;
+  height: 24px;
+  border: 4px solid var(--col-fg);
+  padding: 4px;
+  image-rendering: pixelated;
+}
+
+.loading-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--col-fg);
+  animation-name: loading-fill;
+  animation-timing-function: steps(16, end);
+  animation-fill-mode: forwards;
+}
+
+@keyframes loading-fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.enter-btn {
+  font-family: var(--font-pixel);
+  font-size: 28px;
+  color: #000;
+  background: var(--col-fg);
+  border: 0;
+  padding: 10px 30px;
+  cursor: pointer;
+  animation: enter-pop 0.4s steps(4, end);
+}
+
+.enter-btn:hover {
+  opacity: 0.8;
+}
+
+.enter-btn:active {
+  transform: scale(0.92);
+}
+
+@keyframes enter-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-bar-fill {
+    animation: none;
+    width: 100%;
+  }
+  .enter-btn {
+    animation: none;
+  }
+}

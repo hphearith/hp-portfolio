@@ -40,6 +40,10 @@ export const ja = {
       reopen: "再入店いたせ",
     },
 
+    loading: {
+      enter: "はいる",
+    },
+
     talk: {
       topics: [
         {

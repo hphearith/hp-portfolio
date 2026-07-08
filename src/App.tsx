@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ShopScreen from "./shop/ShopScreen";
+import LoadingScreen from "./components/LoadingScreen";
 import MuteButton from "./components/MuteButton";
 import LanguageButton from "./components/LanguageButton";
 import { startBgm } from "./audio/sfx";
@@ -12,6 +13,7 @@ const BASE_H = 540;
 export default function App() {
   const { t } = useTranslation();
   const stageRef = useRef<HTMLDivElement>(null);
+  const [entered, setEntered] = useState(false);
 
   // Scale the fixed-resolution stage to fit the viewport (crisp pixels).
   useEffect(() => {
@@ -27,29 +29,18 @@ export default function App() {
     return () => window.removeEventListener("resize", fit);
   }, []);
 
-  // Try to start the looping BGM immediately on landing. Browsers usually
-  // block autoplay with sound until a user gesture, so we also retry on the
-  // first interaction (pointer or key) — whichever lands first wins (startBgm
-  // is a no-op once it's already playing).
-  useEffect(() => {
+  // Browsers block audio with sound until a user gesture. The loading
+  // screen's "Enter" button click IS that gesture, so BGM only starts then.
+  function handleEnter() {
     startBgm();
-    function kick() {
-      startBgm();
-      window.removeEventListener("pointerdown", kick);
-      window.removeEventListener("keydown", kick);
-    }
-    window.addEventListener("pointerdown", kick);
-    window.addEventListener("keydown", kick);
-    return () => {
-      window.removeEventListener("pointerdown", kick);
-      window.removeEventListener("keydown", kick);
-    };
-  }, []);
+    setEntered(true);
+  }
 
   return (
     <>
       <div className="stage" ref={stageRef}>
         <ShopScreen />
+        {!entered && <LoadingScreen onEnter={handleEnter} />}
       </div>
 
       <LanguageButton />
