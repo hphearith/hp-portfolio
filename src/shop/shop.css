@@ -250,6 +250,38 @@
 @media (prefers-reduced-motion: reduce) {
   .art-flash { animation: none; }
 }
+/* ---- Steam rising off the bread ----
+   steam1/steam2.png are two curl frames, same canvas coordinate space as
+   the hotspots below. Anchor is (276,36) in canvas px -> *3 = (828,108).
+   The two wisps alternate (one fades/rises while the other resets),
+   reading as steam swapping places as it drifts up off the loaf. */
+.art-steam {
+  position: absolute;
+  left: 820px;
+  top: 84px;
+  width: 24px;
+  height: auto;
+  image-rendering: pixelated;
+  pointer-events: none;
+  opacity: 0;
+}
+.art-steam--1 {
+  animation: steam-rise 3.6s ease-in-out infinite;
+}
+.art-steam--2 {
+  animation: steam-rise 3.6s ease-in-out infinite;
+  animation-delay: 1.8s;
+}
+@keyframes steam-rise {
+  0% { opacity: 0; transform: translateY(6px); }
+  12% { opacity: 0.9; transform: translateY(0); }
+  40% { opacity: 0.5; transform: translateY(-10px); }
+  48%, 100% { opacity: 0; transform: translateY(-16px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .art-steam { animation: none; opacity: 0; }
+}
+
 /* Clickable art regions. Positions are given in the pixel-art canvas's own
    coordinates and upscaled 3x to match this site's ~915px-wide render. */
 .art-hotspot {

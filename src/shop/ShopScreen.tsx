@@ -29,6 +29,8 @@ import claudeSprite from "../assets/sprites/claude.png";
 import speaker1Sprite from "../assets/sprites/speaker1.png";
 import speaker2Sprite from "../assets/sprites/speaker2.png";
 import speaker3Sprite from "../assets/sprites/speaker3.png";
+import steam1Sprite from "../assets/sprites/steam1.png";
+import steam2Sprite from "../assets/sprites/steam2.png";
 
 const HANDFOOT_SPRITES = [
   handfoot1Sprite,
@@ -285,6 +287,20 @@ export default function ShopScreen({ active = true }: { active?: boolean }) {
               timing in shop.css .art-flash) */}
           <div className="art-flash art-flash--left" aria-hidden="true" />
           <div className="art-flash art-flash--right" aria-hidden="true" />
+          {/* Steam wisps rising off the bread (steam1/steam2.png alternate,
+              positions in artbase.png pixels x3'd, see .art-hotspot--bread) */}
+          <img
+            className="art-steam art-steam--1"
+            src={steam1Sprite}
+            alt=""
+            aria-hidden="true"
+          />
+          <img
+            className="art-steam art-steam--2"
+            src={steam2Sprite}
+            alt=""
+            aria-hidden="true"
+          />
           {/* Achma logo hotspot -> achma.site. Hitbox shown visibly (debug)
               until alignment's confirmed, then strip the background/border. */}
           <a
