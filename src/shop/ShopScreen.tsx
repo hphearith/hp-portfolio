@@ -1,4 +1,5 @@
 import { useEffect, useReducer, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Frame from "../components/Frame";
 import Heart from "./Heart";
 import Typewriter from "./Typewriter";
@@ -8,14 +9,14 @@ import {
   PROJECTS,
   STARTING_GOLD,
   ROOT_COMMANDS,
-  GREETING,
-  TALK_TOPICS,
+  TALK_TOPIC_COUNT,
   TALK_EXIT_INDEX,
 } from "./items";
 import { initialShopState, shopReducer, BUY_EXIT_INDEX } from "./shopReducer";
 import "./shop.css";
 
 export default function ShopScreen() {
+  const { t } = useTranslation();
   const [state, dispatch] = useReducer(shopReducer, initialShopState);
   const [greetingSkip, setGreetingSkip] = useState(false);
 
@@ -119,13 +120,13 @@ export default function ShopScreen() {
   if (state.closed) {
     return (
       <div className="closed-overlay">
-        <p>Thou hast left mine shoppe.</p>
+        <p>{t("closed.line")}</p>
         <button
           type="button"
           className="reopen-btn"
           onClick={() => dispatch({ type: "REOPEN" })}
         >
-          Re-entereth
+          {t("closed.reopen")}
         </button>
       </div>
     );
@@ -146,7 +147,7 @@ export default function ShopScreen() {
     <div className="dialog-box" onClick={() => dispatch({ type: "ADVANCE" })}>
       <div className="dialog-text" aria-live="polite">
         <Typewriter
-          text={state.dialog ?? ""}
+          text={state.dialog ? t(state.dialog) : ""}
           skip={state.dialogReady}
           onChar={() => playSfx("squeak")}
           onComplete={() => dispatch({ type: "DIALOG_SKIP" })}
@@ -166,7 +167,7 @@ export default function ShopScreen() {
           <img
             className="art-base"
             src="/sprites/artbase.png"
-            alt="The shopkeeper"
+            alt={t("aria.shopkeeper")}
           />
           {[1, 2, 3, 4].map((n) => (
             <img
@@ -189,14 +190,14 @@ export default function ShopScreen() {
       >
         {selected ? (
           <>
-            <div className="info-title">{selected.name}</div>
-            <div className="info-blurb">{selected.blurb}</div>
+            <div className="info-title">{t(`projects.${selected.id}.name`)}</div>
+            <div className="info-blurb">{t(`projects.${selected.id}.blurb`)}</div>
             <div className="info-price">{selected.price}$</div>
           </>
         ) : (
           <>
-            <div className="info-title">Exit</div>
-            <div className="info-blurb">{"Leaveth this liste,\nworm."}</div>
+            <div className="info-title">{t("info.exitTitle")}</div>
+            <div className="info-blurb">{t("info.exitBlurb")}</div>
           </>
         )}
       </Frame>
@@ -208,7 +209,7 @@ export default function ShopScreen() {
       {!talkMode && (
       <Frame className="panel menu">
         {showItemList ? (
-          <div className="item-list" role="menu" aria-label="Shop items">
+          <div className="item-list" role="menu" aria-label={t("aria.shopItems")}>
             {PROJECTS.map((p, i) => (
               <div
                 key={p.id}
@@ -220,7 +221,7 @@ export default function ShopScreen() {
                 <span className="item-cursor">
                   {state.itemIndex === i && state.phase === "buy" && <Heart />}
                 </span>
-                <span className="item-name">{p.name}</span>
+                <span className="item-name">{t(`projects.${p.id}.name`)}</span>
                 <span className="item-price">{p.price}$</span>
               </div>
             ))}
@@ -234,15 +235,15 @@ export default function ShopScreen() {
               <span className="item-cursor">
                 {onBuyExit && state.phase === "buy" && <Heart />}
               </span>
-              <span className="item-name">Exit</span>
+              <span className="item-name">{t("commands.exit")}</span>
               <span className="item-price" />
             </div>
           </div>
         ) : state.phase === "talk" ? (
-          <div className="item-list" role="menu" aria-label="Talk topics">
-            {TALK_TOPICS.map((topic, i) => (
+          <div className="item-list" role="menu" aria-label={t("aria.talkTopics")}>
+            {Array.from({ length: TALK_TOPIC_COUNT }, (_, i) => (
               <div
-                key={topic.label}
+                key={i}
                 className="item-row"
                 role="menuitem"
                 aria-current={state.talkIndex === i ? "true" : undefined}
@@ -251,7 +252,7 @@ export default function ShopScreen() {
                 <span className="item-cursor">
                   {state.talkIndex === i && <Heart />}
                 </span>
-                <span className="item-name">{topic.label}</span>
+                <span className="item-name">{t(`talk.topics.${i}.label`)}</span>
                 <span className="item-price" />
               </div>
             ))}
@@ -266,7 +267,7 @@ export default function ShopScreen() {
               <span className="item-cursor">
                 {state.talkIndex === TALK_EXIT_INDEX && <Heart />}
               </span>
-              <span className="item-name">Exit</span>
+              <span className="item-name">{t("commands.exit")}</span>
               <span className="item-price" />
             </div>
           </div>
@@ -276,7 +277,7 @@ export default function ShopScreen() {
             onClick={() => setGreetingSkip(true)}
           >
             <Typewriter
-              text={GREETING}
+              text={t("greeting")}
               skip={greetingSkip}
               onChar={() => playSfx("squeak")}
             />
@@ -290,14 +291,14 @@ export default function ShopScreen() {
       <Frame className="panel buy-panel">
         {state.phase === "confirm" ? (
           <div className="buy-text">
-            <div>{`Buyeth for\n${selected.price}$ ?`}</div>
+            <div>{t("confirm.prompt", { price: selected.price })}</div>
             <div
               className="confirm-option"
               role="button"
               onClick={() => tapConfirm(true)}
             >
               <span className="item-cursor">{state.confirmYes && <Heart />}</span>
-              <span>Yes</span>
+              <span>{t("confirm.yes")}</span>
             </div>
             <div
               className="confirm-option"
@@ -305,13 +306,13 @@ export default function ShopScreen() {
               onClick={() => tapConfirm(false)}
             >
               <span className="item-cursor">{!state.confirmYes && <Heart />}</span>
-              <span>No</span>
+              <span>{t("confirm.no")}</span>
             </div>
           </div>
         ) : buyDialog ? (
           dialogEl
         ) : (
-          <div className="cmd-list" role="menu" aria-label="Shop actions">
+          <div className="cmd-list" role="menu" aria-label={t("aria.shopActions")}>
             {ROOT_COMMANDS.map((cmd, i) => (
               <div
                 key={cmd}
@@ -327,14 +328,14 @@ export default function ShopScreen() {
                 <span className="item-cursor">
                   {state.phase === "root" && state.rootIndex === i && <Heart />}
                 </span>
-                <span>{cmd}</span>
+                <span>{t(cmd)}</span>
               </div>
             ))}
           </div>
         )}
         <div className="buy-footer">
           <span className="gold">{STARTING_GOLD}$</span>
-          <span className="space-count">Space: 12</span>
+          <span className="space-count">{t("footer.space")}</span>
         </div>
       </Frame>
       )}

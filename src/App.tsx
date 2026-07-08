@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import ShopScreen from "./shop/ShopScreen";
 import MuteButton from "./components/MuteButton";
+import LanguageButton from "./components/LanguageButton";
 import { startBgm } from "./audio/sfx";
 import { PROJECTS } from "./shop/items";
 
@@ -8,6 +10,7 @@ const BASE_W = 960;
 const BASE_H = 540;
 
 export default function App() {
+  const { t } = useTranslation();
   const stageRef = useRef<HTMLDivElement>(null);
 
   // Scale the fixed-resolution stage to fit the viewport (crisp pixels).
@@ -49,19 +52,18 @@ export default function App() {
         <ShopScreen />
       </div>
 
+      <LanguageButton />
       <MuteButton />
 
       {/* Real content for crawlers + screen readers (visually hidden). */}
-      <section className="sr-only" aria-label="Portfolio projects">
-        <h1>Hearith — Developer Portfolio</h1>
-        <p>
-          A Deltarune-style portfolio shop. Each shop ware links to a real
-          project.
-        </p>
+      <section className="sr-only" aria-label={t("aria.portfolio")}>
+        <h1>{t("seo.title")}</h1>
+        <p>{t("seo.tagline")}</p>
         <ul>
           {PROJECTS.map((p) => (
             <li key={p.id}>
-              <a href={p.link}>{p.name}</a> — {p.blurb.replace(/\n/g, " ")}
+              <a href={p.link}>{t(`projects.${p.id}.name`)}</a> —{" "}
+              {t(`projects.${p.id}.blurb`).replace(/\n/g, " ")}
             </li>
           ))}
         </ul>

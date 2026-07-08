@@ -4,7 +4,13 @@
  *
  * Recommended (personal / non-commercial use, credit Toby Fox):
  *   PixelMono  -> "Determination Mono" or "8bitoperator" (main shop text)
- *   FancyOldEn -> a blackletter/serif for Rouxls' "Buyeth" flavour text
+ *   JF14       -> jf14-regular.ttf, a JF-Dot pixel font covering kana/kanji
+ *                 (Japanese UI text)
+ *
+ * Everything reads its font from --font-pixel; switching <html lang="ja">
+ * (done by src/i18n on language change) swaps the whole stack via :lang(ja).
+ * JF14 leads the ja stack so Latin glyphs mixed into Japanese text (prices,
+ * "[Z]") stay on the same pixel grid; PixelMono remains as fallback.
  */
 
 @font-face {
@@ -13,6 +19,20 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "JF14";
+  src: url("/fonts/jf14-regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+:root {
+  --font-pixel: "PixelMono", "Courier New", monospace;
+}
+
+:root:lang(ja) {
+  --font-pixel: "JF14", "PixelMono", "Courier New", monospace;
+}
+
 .font-fancy {
-  font-family: "PixelMono", monospace;
+  font-family: var(--font-pixel);
 }

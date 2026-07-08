@@ -1,4 +1,4 @@
-import { PROJECTS, ROOT_COMMANDS, CMD_BUY, CMD_TALK, TALK_TOPICS, TALK_EXIT_INDEX, TALK_ROWS } from "./items";
+import { PROJECTS, ROOT_COMMANDS, CMD_BUY, CMD_TALK, TALK_EXIT_INDEX, TALK_ROWS } from "./items";
 
 /** number of project rows in the buy list */
 export const ITEM_COUNT = PROJECTS.length;
@@ -27,7 +27,7 @@ export type ShopState = {
   itemIndex: number;
   /** in confirm phase: true = Yes highlighted, false = No */
   confirmYes: boolean;
-  /** text currently typing out in the dialog box (null = none) */
+  /** i18n key of the text typing out in the dialog box (null = none) */
   dialog: string | null;
   /** phase to return to after a dialog is dismissed */
   dialogReturn: Phase;
@@ -214,7 +214,7 @@ function selectInMenu(state: ShopState): ShopState {
       return {
         ...state,
         phase: "dialog",
-        dialog: project.buyLine,
+        dialog: `projects.${project.id}.buyLine`,
         dialogReturn: "buy",
         pendingLink: project.link,
         dialogReady: false,
@@ -227,11 +227,10 @@ function selectInMenu(state: ShopState): ShopState {
     if (state.talkIndex === TALK_EXIT_INDEX) {
       return { ...state, phase: "root" };
     }
-    const topic = TALK_TOPICS[state.talkIndex];
     return {
       ...state,
       phase: "dialog",
-      dialog: topic.text,
+      dialog: `talk.topics.${state.talkIndex}.text`,
       dialogReturn: "talk",
       dialogReady: false,
     };

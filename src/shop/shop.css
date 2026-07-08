@@ -155,7 +155,7 @@
 .character-fallback {
   align-self: center;
   margin: auto;
-  font-family: "PixelMono", monospace;
+  font-family: var(--font-pixel);
   font-size: 36px;
   text-align: center;
   opacity: 0.4;
@@ -295,6 +295,37 @@
   margin-top: auto;
 }
 
+/* ---- Japanese sizing ----
+   JF14 renders taller/wider than PixelMono at the same px size, so the
+   5-row menus (items/topics + Exit) spill out of the 40px frames and the
+   greeting fills its box. Step JA text down a notch and give the dialogue
+   more line air. Kanji stay legible at these sizes; 28px (2x the font's
+   14px grid) is used where crispness matters most. */
+:lang(ja) .item-list,
+:lang(ja) .cmd-list {
+  font-size: 26px;
+  line-height: 1.2;
+}
+:lang(ja) .greeting {
+  font-size: 26px;
+  line-height: 1.5;
+}
+:lang(ja) .dialog-box {
+  font-size: 26px;
+  line-height: 1.45;
+}
+:lang(ja) .buy-text {
+  font-size: 24px;
+  line-height: 1.4;
+}
+:lang(ja) .info-title {
+  font-size: 26px;
+}
+:lang(ja) .info-blurb {
+  font-size: 18px;
+  line-height: 1.35;
+}
+
 /* ---- SOUL cursor ---- */
 .heart-glyph {
   color: var(--col-heart);
@@ -320,7 +351,7 @@
   text-align: center;
 }
 .closed-overlay p {
-  font-family: "PixelMono", monospace;
+  font-family: var(--font-pixel);
   font-size: 40px;
 }
 .reopen-btn {

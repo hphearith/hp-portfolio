@@ -1,13 +1,12 @@
+/**
+ * Structural shop data only. All display text lives in src/i18n/{en,ja}.ts,
+ * keyed by project id (projects.<id>.name / .blurb / .buyLine) and by
+ * talk-topic index (talk.topics.<n>.label / .text).
+ */
 export type Project = {
   id: string;
-  /** shop-item display name */
-  name: string;
   /** flavour price in $ (not real money) */
   price: number;
-  /** short text shown in the top-right info panel */
-  blurb: string;
-  /** Rouxls dialog line shown when you "Buyeth" it */
-  buyLine: string;
   /** real URL opened on purchase */
   link: string;
   /** optional thumbnail in /sprites/ */
@@ -17,78 +16,45 @@ export type Project = {
 /** Special non-project row that closes the shop. */
 export const EXIT_ID = "exit";
 
-/** Root command menu (right panel) shown on landing. */
-export const ROOT_COMMANDS = ["Buy", "Talk", "Exit"] as const;
+/** Root command menu (right panel) shown on landing — i18n keys. */
+export const ROOT_COMMANDS = [
+  "commands.buy",
+  "commands.talk",
+  "commands.exit",
+] as const;
 export const CMD_BUY = 0;
 export const CMD_TALK = 1;
 export const CMD_EXIT = 2;
 
-/** Rouxls greeting shown in the left panel on landing. */
-export const GREETING =
-  "* Sup, worm.\nWelcometh to mine\nfine SHOPPE.\nWhat wouldst thou?";
+/** Number of talk topics (labels/texts live in the i18n files). */
+export const TALK_TOPIC_COUNT = 4;
 
-export type TalkTopic = {
-  label: string;
-  text: string;
-};
-
-export const TALK_TOPICS: TalkTopic[] = [
-  {
-    label: "About yourself",
-    text: "* I am Rouxls Kaard,\nDuke of Puzzleth.\nI keepeth this fine\nshoppe for worms\nlike thee.",
-  },
-  {
-    label: "About your experience",
-    text: "* I hath crafted manye\npuzzles for the King\nof Spades himself.\nNo worm canst solve\nthem — except me.",
-  },
-  {
-    label: "About your education",
-    text: "* I learnedst the art\nof puzzles at the\nCarde Academie.\nGraduated with\nhighest honours.",
-  },
-  {
-    label: "About your ambitions",
-    text: "* I shalt becometh the\ngreatest puzzle-master\nin all the land.\nThen every worm\nwilst respect me!",
-  },
-];
-
-export const TALK_EXIT_INDEX = TALK_TOPICS.length;
-export const TALK_ROWS = TALK_TOPICS.length + 1;
+export const TALK_EXIT_INDEX = TALK_TOPIC_COUNT;
+export const TALK_ROWS = TALK_TOPIC_COUNT + 1;
 
 /**
  * Shop wares = portfolio projects. Edit these with your real work.
- * Keep names short so they fit the menu column like the reference.
+ * Names/blurbs are in the i18n files under projects.<id>.
  */
 export const PROJECTS: Project[] = [
   {
     id: "rouxls-roux",
-    name: "RouxlsRoux",
     price: 50,
-    blurb: "A worthelesse trinket.\nDoeth nothing. Buyeth anyway.",
-    buyLine: "* A fine choice, worm! Thou hast TASTE.",
     link: "https://github.com/hphearith",
   },
   {
     id: "brave-ax",
-    name: "Brave Ax",
     price: 150,
-    blurb: "ATK +10.\nForged for ye who shippeth.",
-    buyLine: "* Swing it at thy bugs, lesser worm!",
     link: "https://github.com/hphearith",
   },
   {
     id: "dainty-scarf",
-    name: "DaintyScarf",
     price: 200,
-    blurb: "DEF +6.\nMost fashionable. Verye warm.",
-    buyLine: "* It suiteth thee. Barely.",
     link: "https://github.com/hphearith",
   },
   {
     id: "amber-card",
-    name: "Amber Card",
     price: 100,
-    blurb: "A mysteryous carde.\nContacteth its owner.",
-    buyLine: "* Useth it to reach me, worm. Or don't.",
     link: "mailto:garnish_kelvin53@icloud.com",
   },
 ];
