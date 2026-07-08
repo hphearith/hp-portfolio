@@ -264,6 +264,13 @@ export default function ShopScreen() {
             rel="noopener noreferrer"
             aria-label="Bread"
           />
+          <a
+            className="art-hotspot art-hotspot--wine"
+            href="https://nethphorntb.netlify.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Wine"
+          />
         </div>
       </div>
 
