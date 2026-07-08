@@ -248,6 +248,15 @@ export default function ShopScreen() {
               timing in shop.css .art-flash) */}
           <div className="art-flash art-flash--left" aria-hidden="true" />
           <div className="art-flash art-flash--right" aria-hidden="true" />
+          {/* Achma logo hotspot -> achma.site. Hitbox shown visibly (debug)
+              until alignment's confirmed, then strip the background/border. */}
+          <a
+            className="art-hotspot art-hotspot--achma"
+            href="https://achma.site/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Achma"
+          />
         </div>
       </div>
 

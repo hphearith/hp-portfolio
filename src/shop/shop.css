@@ -246,6 +246,22 @@
 @media (prefers-reduced-motion: reduce) {
   .art-flash { animation: none; }
 }
+/* Clickable art regions. Positions are given in the pixel-art canvas's own
+   coordinates and upscaled 3x to match this site's ~915px-wide render. */
+.art-hotspot {
+  position: absolute;
+  display: block;
+  cursor: pointer;
+  /* debug: visible hitbox for alignment - remove once confirmed */
+  background: rgba(255, 0, 0, 0.35);
+  border: 1px dashed red;
+}
+.art-hotspot--achma {
+  left: 600px; /* 200 * 3 */
+  top: 6px; /* 2 * 3 */
+  width: 102px; /* (234 - 200) * 3 */
+  height: 75px; /* (27 - 2) * 3 */
+}
 .art-claude {
   position: absolute;
   inset: 0;
