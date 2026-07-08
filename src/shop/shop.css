@@ -262,6 +262,12 @@
   width: 102px; /* (234 - 200) * 3 */
   height: 75px; /* (27 - 2) * 3 */
 }
+.art-hotspot--bread {
+  left: 810px; /* 269 * 3 */
+  top: 120px; /* 41 * 3 */
+  width: 45px; /* (284 - 269) * 3 */
+  height: 33px; /* (52 - 41) * 3 */
+}
 .art-claude {
   position: absolute;
   inset: 0;

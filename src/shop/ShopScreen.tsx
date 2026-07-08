@@ -257,6 +257,13 @@ export default function ShopScreen() {
             rel="noopener noreferrer"
             aria-label="Achma"
           />
+          <a
+            className="art-hotspot art-hotspot--bread"
+            href="https://numpang-site.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Bread"
+          />
         </div>
       </div>
 
