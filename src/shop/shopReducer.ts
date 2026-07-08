@@ -1,4 +1,4 @@
-import { PROJECTS, ROOT_COMMANDS, CMD_BUY, CMD_TALK, TALK_EXIT_INDEX, TALK_ROWS } from "./items";
+import { PROJECTS, ROOT_COMMANDS, CMD_BUY, CMD_TALK, TALK_EXIT_INDEX, TALK_ROWS, STARTING_GOLD } from "./items";
 
 /** number of project rows in the buy list */
 export const ITEM_COUNT = PROJECTS.length;
@@ -54,6 +54,8 @@ export type ShopState = {
   ownedIds: string[];
   /** highlighted row 0..ownedIds.length in the items list (items phase) */
   itemsIndex: number;
+  /** current gold, deducted on each purchase */
+  gold: number;
 };
 
 export const initialShopState: ShopState = {
@@ -70,6 +72,7 @@ export const initialShopState: ShopState = {
   selectTick: 0,
   ownedIds: [],
   itemsIndex: 0,
+  gold: STARTING_GOLD,
 };
 
 export type ShopAction =
@@ -235,8 +238,8 @@ function selectInMenu(state: ShopState): ShopState {
       return { ...state, phase: "root" };
     }
     const project = PROJECTS[state.itemIndex];
-    // sold out (one stock, already owned) — not selectable
-    if (state.ownedIds.includes(project.id)) {
+    // sold out (one stock, already owned) or can't afford it — not selectable
+    if (state.ownedIds.includes(project.id) || state.gold < project.price) {
       return state;
     }
     // open the buy prompt, default cursor on Yes
@@ -253,6 +256,7 @@ function selectInMenu(state: ShopState): ShopState {
         pendingLink: project.link,
         dialogReady: false,
         ownedIds: [...state.ownedIds, project.id],
+        gold: state.gold - project.price,
       };
     }
     // "No" -> back to the list

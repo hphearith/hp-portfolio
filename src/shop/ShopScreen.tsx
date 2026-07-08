@@ -7,7 +7,6 @@ import { useKeyboardNav } from "./useKeyboardNav";
 import { playSfx, preloadSfx, isMuted, subscribeMuted } from "../audio/sfx";
 import {
   PROJECTS,
-  STARTING_GOLD,
   ROOT_COMMANDS,
   TALK_TOPIC_COUNT,
   TALK_EXIT_INDEX,
@@ -537,7 +536,7 @@ export default function ShopScreen({ active = true }: { active?: boolean }) {
           </div>
         )}
         <div className="buy-footer">
-          <span className="gold">{STARTING_GOLD}$</span>
+          <span className="gold">{state.gold}$</span>
           <span className="space-count">{t("footer.space")}</span>
         </div>
       </Frame>
