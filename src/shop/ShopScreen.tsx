@@ -178,6 +178,10 @@ export default function ShopScreen() {
               aria-hidden="true"
             />
           ))}
+          {/* "Flashy" glints popping beside the head (flash1/2.png,
+              timing in shop.css .art-flash) */}
+          <div className="art-flash art-flash--left" aria-hidden="true" />
+          <div className="art-flash art-flash--right" aria-hidden="true" />
         </div>
       </div>
 
