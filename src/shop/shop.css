@@ -151,7 +151,7 @@
   max-width: none;
   image-rendering: pixelated;
   transform-origin: 649.5px 43.5px;
-  animation: achma-spin 3s linear infinite;
+  animation: achma-spin 6s linear infinite;
 }
 @keyframes achma-spin {
   from { transform: rotate(0deg); }
@@ -206,6 +206,10 @@
   0%, 70.59% { opacity: 0; }
   70.6%, 100% { opacity: 1; }
 }
+/* Muted: freeze on speaker1, stop cycling. */
+.art-speaker--muted.art-speaker--1 { animation: none; opacity: 1; }
+.art-speaker--muted.art-speaker--2,
+.art-speaker--muted.art-speaker--3 { animation: none; opacity: 0; }
 @media (prefers-reduced-motion: reduce) {
   .art-frame { animation: none; }
   .art-frame--1 { opacity: 1; }

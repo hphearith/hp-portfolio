@@ -75,14 +75,24 @@ export function playSfx(name: SfxName) {
 // Only mutes the music; sound effects keep playing.
 let muted = false;
 
+type MuteListener = (muted: boolean) => void;
+const muteListeners = new Set<MuteListener>();
+
 /** Mute/unmute the background music (SFX unaffected). */
 export function setMuted(value: boolean) {
   muted = value;
   bgm?.mute(value);
+  muteListeners.forEach((fn) => fn(value));
 }
 
 export function isMuted() {
   return muted;
+}
+
+/** Subscribe to mute changes (e.g. to drive UI elsewhere). Returns an unsubscribe fn. */
+export function subscribeMuted(fn: MuteListener) {
+  muteListeners.add(fn);
+  return () => muteListeners.delete(fn);
 }
 
 /** Flip mute and return the new state. */

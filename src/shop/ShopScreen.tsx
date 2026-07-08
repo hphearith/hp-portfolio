@@ -4,7 +4,7 @@ import Frame from "../components/Frame";
 import Heart from "./Heart";
 import Typewriter from "./Typewriter";
 import { useKeyboardNav } from "./useKeyboardNav";
-import { playSfx, preloadSfx } from "../audio/sfx";
+import { playSfx, preloadSfx, isMuted, subscribeMuted } from "../audio/sfx";
 import {
   PROJECTS,
   STARTING_GOLD,
@@ -62,6 +62,10 @@ export default function ShopScreen() {
   const { t } = useTranslation();
   const [state, dispatch] = useReducer(shopReducer, initialShopState);
   const [greetingSkip, setGreetingSkip] = useState(false);
+  const [muted, setMuted] = useState(isMuted());
+
+  // speaker sprite freezes on speaker1 (no cycling) while music is muted
+  useEffect(() => subscribeMuted(setMuted), []);
 
   useKeyboardNav(dispatch);
 
@@ -253,7 +257,9 @@ export default function ShopScreen() {
           {[1, 2, 3].map((n) => (
             <img
               key={n}
-              className={`art-frame art-speaker art-speaker--${n}`}
+              className={`art-frame art-speaker art-speaker--${n}${
+                muted ? " art-speaker--muted" : ""
+              }`}
               src={SPEAKER_SPRITES[n - 1]}
               alt=""
               aria-hidden="true"
