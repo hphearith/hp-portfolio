@@ -14,6 +14,8 @@ import {
   TALK_ABOUT_FACES,
   TALK_EXPERIENCE_INDEX,
   TALK_EXPERIENCE_FACES,
+  TALK_EDUCATION_INDEX,
+  TALK_EDUCATION_FACES,
 } from "./items";
 import type { Project } from "./items";
 import { initialShopState, shopReducer, BUY_EXIT_INDEX } from "./shopReducer";
@@ -68,7 +70,9 @@ function faceForDialog(dialogKey: string) {
 // "Tell me about yourself" and "About your experience" script a specific
 // face per page instead of the hash-based pick above.
 const FACE_SPRITE_BY_KEY: Record<
-  (typeof TALK_ABOUT_FACES)[number] | (typeof TALK_EXPERIENCE_FACES)[number],
+  | (typeof TALK_ABOUT_FACES)[number]
+  | (typeof TALK_EXPERIENCE_FACES)[number]
+  | (typeof TALK_EDUCATION_FACES)[number],
   string
 > = {
   base: facebaseSprite,
@@ -85,6 +89,9 @@ function faceForState(state: ShopState) {
   }
   if (state.dialogReturn === "talk" && state.talkIndex === TALK_EXPERIENCE_INDEX) {
     return FACE_SPRITE_BY_KEY[TALK_EXPERIENCE_FACES[state.dialogPage] ?? "base"];
+  }
+  if (state.dialogReturn === "talk" && state.talkIndex === TALK_EDUCATION_INDEX) {
+    return FACE_SPRITE_BY_KEY[TALK_EDUCATION_FACES[state.dialogPage] ?? "base"];
   }
   return faceForDialog(state.dialog);
 }

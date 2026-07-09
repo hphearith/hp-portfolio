@@ -45,7 +45,7 @@ export const en = {
         {
           label: "Tell me about yourself",
           pages: [
-            "* My name is Heng Phearith.\nI'm a 3rd year computer\nscience student studying\nat AUPP.",
+            "* My name is Heng Phearith.\nI'm a third-year Computer\nScience student studying\nat AUPP.",
             "* I also study Japanese with the plan of working in Japan someday.",
             "* I like to read manga\nand watch Youtube videos\nin my spare time.",
             "* Well... *if* I have\nspare time.",
@@ -70,7 +70,13 @@ export const en = {
         {
           label: "About your education",
           pages: [
-            "* I learnedst the art\nof puzzles at the\nCarde Academie.\nGraduated with\nhighest honours.",
+            "* Currently, I'm in my\nthird-year studying Computer\nScience at the American\nUniversity of Phnom Penh,\nor AUPP as its called.",
+            "* Within AUPP, I am\nalso a participant of\na program called the\nJapanese IT Pathway Program.",
+            "* Where I'm being trained\nto be an elite IT\nprofessional, set to work\nin Japan!",
+            "* Aside from that, I've\nalso been studying Japanese\nfor about four years.",
+            "* My years of efforts\nhave thus far earned\nme N2 of the JLPT!",
+            "* I am able to\ncommunicate in Japanese in\na business setting.",
+            "* Want to start\ntalking business?",
           ],
         },
         {
