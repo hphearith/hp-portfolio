@@ -1,5 +1,5 @@
 /**
- * English strings. Rouxls' fake-archaic voice ("Buyeth", "worm") lives here.
+ * English strings. Shopkeeper voice: chill, a little cheeky, casual.
  * Dialogue lines start with "* " (Deltarune narration style); the Japanese
  * file uses the full-width asterisk ＊ instead.
  */
@@ -105,12 +105,11 @@ export const en = {
           pages: [
             "* Oh, you're curious\nabout this place?",
             "* This portfolio is\nmodeled after a shop\nfrom DELTARUNE, one of\nmy favorite games.",
-            "* I figured a portfolio\nshould *show* what I can\nbuild, not just list it.",
             "* Under the hood, it's\nbuilt with React and\nTypeScript, plus i18next\nfor the Japanese you can\nswitch to up there.",
-            "* The fonts, sprites and\nsounds are Toby Fox's\nwork. Full credit to him.",
-            "* The dialogue system\ntyping this out, though?\nBuilt it myself.\nIt fought back.",
-            "* Kinda proud of\nthis one, honestly.",
-            "* Take your time\nlooking around.",
+            "* The fonts and\nsounds are Toby Fox's\nwork. Full credit to him.",
+            "* But the sprites you're seeing right now, I drew it all myself! Took me a while, but I think it turned out pretty good.",
+            "* I'm quite proud of\nthis place.",
+            "* Take your time\nlooking around. Try clicking on things! You might just find something interesting.",
           ],
         },
         {
@@ -118,9 +117,12 @@ export const en = {
           pages: [
             "* Huh? You want to\nknow *more* about me?",
             "* I'm flattered.\nLet's see...",
-            "* Between university,\nthe internship, and\nJapanese study, my\ndays are pretty packed.",
-            "* But seeing a project\ncome together at the end\nmakes it all worth it.",
-            "* Even this shop was\none of those projects\nonce. Now it's talking\nto you.",
+            "* On top of studying Japanese for work, I suppose another one of my 'hobbies' is connecting with Japanese people.",
+            "* I just find talking to Japanese people quite fun.",
+            "* I've even collaborated with an NGO to hold a Japanese-style sports festival, held a cultural-exchange events, among various things.",
+            "*...",
+            "* Hmm... now that I say out loud, I sound like a weeb....",
+            "* Eh, who cares.",
             "* If you've read this\nfar, we're practically\nfriends already.",
             "* So, friend...\ncare to browse my\nwares one more time?",
           ],

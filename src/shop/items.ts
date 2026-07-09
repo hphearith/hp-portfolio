@@ -68,11 +68,22 @@ export const TALK_TOPICS: readonly TalkTopicDef[] = [
   { faces: ["base", "base", "happy", "base", "mlem", "base", "mlem"] },
   // 3: About your ambitions (8 pages)
   { faces: ["base", "base", "happy", "neutral", "neutral", "neutral", "neutral", "happy"] },
-  // 4: About this portfolio (8 pages)
-  { faces: ["base", "happy", "base", "base", "mlem", "sweat", "happy", "base"] },
-  // 5: More about yourself (7 pages)
+  // 4: About this portfolio (7 pages)
+  { faces: ["happy", "base", "base", "base", "mlem", "happy", "base"] },
+  // 5: More about yourself (10 pages)
   {
-    faces: ["happy", "mlem", "sweat", "base", "happy", "mlem", "happy"],
+    faces: [
+      "happy",
+      "mlem",
+      "happy",
+      "base",
+      "happy",
+      "neutral",
+      "pout",
+      "happy",
+      "happy",
+      "base",
+    ],
     unlockedBy: TALK_ABOUT_INDEX,
   },
 ];
