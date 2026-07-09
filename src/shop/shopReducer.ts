@@ -1,4 +1,4 @@
-import { PROJECTS, ROOT_COMMANDS, CMD_BUY, CMD_TALK, TALK_EXIT_INDEX, TALK_ROWS, STARTING_GOLD } from "./items";
+import { PROJECTS, ROOT_COMMANDS, CMD_BUY, CMD_TALK, TALK_EXIT_INDEX, TALK_ROWS, TALK_TOPIC_PAGE_COUNT, STARTING_GOLD } from "./items";
 
 /** number of project rows in the buy list */
 export const ITEM_COUNT = PROJECTS.length;
@@ -46,6 +46,10 @@ export type ShopState = {
   linkToOpen: string | null;
   /** false while dialog text is typing; true once revealed or skipped */
   dialogReady: boolean;
+  /** current page 0..n within a multi-page talk topic dialog */
+  dialogPage: number;
+  /** bumped when a dialog moves to its next page (not on dismiss/skip) — drives the "select" sfx */
+  dialogPageTick: number;
   /** highlighted talk topic 0..TALK_EXIT_INDEX (talk phase) */
   talkIndex: number;
   /** bumped on every committed menu selection — drives the "select" sfx */
@@ -68,6 +72,8 @@ export const initialShopState: ShopState = {
   pendingLink: null,
   linkToOpen: null,
   dialogReady: true,
+  dialogPage: 0,
+  dialogPageTick: 0,
   talkIndex: 0,
   selectTick: 0,
   ownedIds: [],
@@ -170,7 +176,7 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
         if (!state.dialogReady) {
           return { ...state, dialogReady: true };
         }
-        return dismissDialog(state);
+        return advanceOrDismissDialog(state);
       }
       const next = selectInMenu(state);
       // Only ding when the selection actually committed a choice.
@@ -183,7 +189,7 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
         if (!state.dialogReady) {
           return { ...state, dialogReady: true };
         }
-        return dismissDialog(state);
+        return advanceOrDismissDialog(state);
       }
       return state;
 
@@ -269,9 +275,10 @@ function selectInMenu(state: ShopState): ShopState {
     return {
       ...state,
       phase: "dialog",
-      dialog: `talk.topics.${state.talkIndex}.text`,
+      dialog: `talk.topics.${state.talkIndex}.pages.0`,
       dialogReturn: "talk",
       dialogReady: false,
+      dialogPage: 0,
     };
   }
   if (state.phase === "items") {
@@ -288,6 +295,26 @@ function selectInMenu(state: ShopState): ShopState {
   return state;
 }
 
+/**
+ * On a committed dialog line: step to the next page of a talk topic, or
+ * dismiss the dialog if this was the last (or only) page. Only the page
+ * -> page step ("select" sfx) bumps dialogPageTick — dismissing does not.
+ */
+function advanceOrDismissDialog(state: ShopState): ShopState {
+  const pageCount = TALK_TOPIC_PAGE_COUNT[state.talkIndex] ?? 1;
+  if (state.dialogReturn === "talk" && state.dialogPage < pageCount - 1) {
+    const dialogPage = state.dialogPage + 1;
+    return {
+      ...state,
+      dialog: `talk.topics.${state.talkIndex}.pages.${dialogPage}`,
+      dialogPage,
+      dialogReady: false,
+      dialogPageTick: state.dialogPageTick + 1,
+    };
+  }
+  return dismissDialog(state);
+}
+
 /** Leave the dialog box, returning to its origin and firing any queued link. */
 function dismissDialog(state: ShopState): ShopState {
   return {
@@ -297,5 +324,6 @@ function dismissDialog(state: ShopState): ShopState {
     pendingLink: null,
     linkToOpen: state.pendingLink,
     dialogReady: true,
+    dialogPage: 0,
   };
 }

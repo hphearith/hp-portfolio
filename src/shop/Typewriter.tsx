@@ -36,14 +36,28 @@ export default function Typewriter({
   skip = false,
 }: Props) {
   const [count, setCount] = useState(0);
+  // tracks which `text` the current `count` belongs to
+  const [seenText, setSeenText] = useState<string | null>(null);
   const reduced = usePrefersReducedMotion();
   const completed = useRef(false);
 
-  // restart whenever the text changes
-  useEffect(() => {
+  // Reset synchronously during render (not in an effect) whenever the text
+  // changes. Doing this in an effect left a one-commit window where the
+  // completion-check effect below could still read the OLD count against
+  // the NEW (often shorter) text, decide it was already "done", and skip
+  // the animation + skip the per-char SFX entirely.
+  if (text !== seenText) {
+    setSeenText(text);
     setCount(reduced ? text.length : 0);
     completed.current = false;
-  }, [text, reduced]);
+  }
+
+  // reduced-motion can toggle mid-line without text changing
+  useEffect(() => {
+    if (reduced) {
+      setCount(text.length);
+    }
+  }, [reduced, text]);
 
   // instantly reveal all text when skip prop becomes true
   useEffect(() => {

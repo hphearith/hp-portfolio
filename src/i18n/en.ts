@@ -6,7 +6,7 @@
 export const en = {
   translation: {
     greeting:
-      "* Sup, worm.\nWelcometh to mine\nfine SHOPPE.\nWhat wouldst thou?",
+      "* Greetings! \nWelcome to my portfolio. \nHave a look around.",
 
     commands: {
       buy: "Buy",
@@ -43,20 +43,35 @@ export const en = {
     talk: {
       topics: [
         {
-          label: "About yourself",
-          text: "* I am Rouxls Kaard,\nDuke of Puzzleth.\nI keepeth this fine\nshoppe for worms\nlike thee.",
+          label: "Tell me about yourself",
+          pages: [
+            "* My name is Heng Phearith.\nI am a 3rd year computer\nscience student studying\nat AUPP.",
+            "* I am also a student of\nthe Japanese IT Pathway\nProgram at AUPP, where I'm\nbeing trained to be an elite\nIT professional, with the\nprospects of working in Japan.",
+            "* I like to watch manga\nand watch Youtube videos\nin my spare time.",
+            "* Well... *if* I have\nspare time.",
+            "* Recently, doing projects\nand learning Japanese has\nbasically become my hobby.",
+            "* Kinda grim if you\nthink about it...",
+            "* But, I am having fun\nso it's alright.",
+            "* Nice to meet you.",
+          ],
         },
         {
           label: "About your experience",
-          text: "* I hath crafted manye\npuzzles for the King\nof Spades himself.\nNo worm canst solve\nthem — except me.",
+          pages: [
+            "* I hath crafted manye\npuzzles for the King\nof Spades himself.\nNo worm canst solve\nthem — except me.",
+          ],
         },
         {
           label: "About your education",
-          text: "* I learnedst the art\nof puzzles at the\nCarde Academie.\nGraduated with\nhighest honours.",
+          pages: [
+            "* I learnedst the art\nof puzzles at the\nCarde Academie.\nGraduated with\nhighest honours.",
+          ],
         },
         {
           label: "About your ambitions",
-          text: "* I shalt becometh the\ngreatest puzzle-master\nin all the land.\nThen every worm\nwilst respect me!",
+          pages: [
+            "* I shalt becometh the\ngreatest puzzle-master\nin all the land.\nThen every worm\nwilst respect me!",
+          ],
         },
       ],
     },

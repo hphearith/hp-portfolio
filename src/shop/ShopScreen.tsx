@@ -10,9 +10,12 @@ import {
   ROOT_COMMANDS,
   TALK_TOPIC_COUNT,
   TALK_EXIT_INDEX,
+  TALK_ABOUT_INDEX,
+  TALK_ABOUT_FACES,
 } from "./items";
 import type { Project } from "./items";
 import { initialShopState, shopReducer, BUY_EXIT_INDEX } from "./shopReducer";
+import type { ShopState } from "./shopReducer";
 import "./shop.css";
 import artbaseSprite from "../assets/sprites/artbase.png";
 import handfoot1Sprite from "../assets/sprites/handfoot1.png";
@@ -24,6 +27,7 @@ import facehappySprite from "../assets/sprites/facehappy.png";
 import facemlemSprite from "../assets/sprites/facemlem.png";
 import faceneutralSprite from "../assets/sprites/faceneutral.png";
 import facepoutSprite from "../assets/sprites/facepout.png";
+import facesweatSprite from "../assets/sprites/facesweat.png";
 import achmaSprite from "../assets/sprites/achma.png";
 import claudeSprite from "../assets/sprites/claude.png";
 import speaker1Sprite from "../assets/sprites/speaker1.png";
@@ -59,6 +63,24 @@ function faceForDialog(dialogKey: string) {
   return DIALOG_FACE_SPRITES[hash % DIALOG_FACE_SPRITES.length];
 }
 
+// "Tell me about yourself" scripts a specific face per page instead of the
+// hash-based pick above.
+const FACE_SPRITE_BY_KEY: Record<(typeof TALK_ABOUT_FACES)[number], string> = {
+  base: facebaseSprite,
+  happy: facehappySprite,
+  mlem: facemlemSprite,
+  neutral: faceneutralSprite,
+  sweat: facesweatSprite,
+};
+
+function faceForState(state: ShopState) {
+  if (!state.dialog) return facebaseSprite;
+  if (state.dialogReturn === "talk" && state.talkIndex === TALK_ABOUT_INDEX) {
+    return FACE_SPRITE_BY_KEY[TALK_ABOUT_FACES[state.dialogPage] ?? "base"];
+  }
+  return faceForDialog(state.dialog);
+}
+
 export default function ShopScreen({ active = true }: { active?: boolean }) {
   const { t } = useTranslation();
   const [state, dispatch] = useReducer(shopReducer, initialShopState);
@@ -90,6 +112,7 @@ export default function ShopScreen({ active = true }: { active?: boolean }) {
   const prevItem = useRef(state.itemIndex);
   const prevConfirm = useRef(state.confirmYes);
   const prevSelectTick = useRef(state.selectTick);
+  const prevDialogPageTick = useRef(state.dialogPageTick);
   const prevItemsIndex = useRef(state.itemsIndex);
   const prevOwnedCount = useRef(state.ownedIds.length);
 
@@ -140,6 +163,15 @@ export default function ShopScreen({ active = true }: { active?: boolean }) {
       prevSelectTick.current = state.selectTick;
     }
   }, [state.selectTick]);
+
+  // "select" ding when a talk-topic dialog moves to its next page (not when
+  // just skipping the current line's typing animation, and not on dismiss).
+  useEffect(() => {
+    if (state.dialogPageTick !== prevDialogPageTick.current) {
+      playSfx("select");
+      prevDialogPageTick.current = state.dialogPageTick;
+    }
+  }, [state.dialogPageTick]);
 
   // ---- Side effect: open the queued project link ----
   // Links are DISABLED for now (no real targets wired yet). When ready, set
@@ -256,7 +288,7 @@ export default function ShopScreen({ active = true }: { active?: boolean }) {
           />
           <img
             className="art-face"
-            src={state.dialog ? faceForDialog(state.dialog) : facebaseSprite}
+            src={faceForState(state)}
             alt=""
             aria-hidden="true"
           />

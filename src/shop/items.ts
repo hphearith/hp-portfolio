@@ -29,6 +29,27 @@ export const TALK_TOPIC_COUNT = 4;
 export const TALK_EXIT_INDEX = TALK_TOPIC_COUNT;
 export const TALK_ROWS = TALK_TOPIC_COUNT + 1;
 
+/** Index of the "Tell me about yourself" topic. */
+export const TALK_ABOUT_INDEX = 0;
+
+/**
+ * Page count per talk topic. Topics with 1 page use a single `text` i18n
+ * key; topics with >1 use `pages.<n>` keys instead (see en/ja.ts).
+ */
+export const TALK_TOPIC_PAGE_COUNT = [8, 1, 1, 1];
+
+/** Face sprite key shown on each page of the "about yourself" topic. */
+export const TALK_ABOUT_FACES = [
+  "base",
+  "happy",
+  "base",
+  "sweat",
+  "sweat",
+  "neutral",
+  "mlem",
+  "base",
+] as const;
+
 /**
  * Shop wares = portfolio projects. Edit these with your real work.
  * Names/blurbs are in the i18n files under projects.<id>.
