@@ -437,11 +437,10 @@ export default function ShopScreen({ active = true }: { active?: boolean }) {
                   <span className="item-cursor">
                     {state.itemIndex === i && state.phase === "buy" && <Heart />}
                   </span>
-                  <span className="item-name">
-                    {t(`projects.${p.id}.name`)}
-                    {owned ? ` ${t("items.soldOut")}` : ""}
+                  <span className="item-name">{t(`projects.${p.id}.name`)}</span>
+                  <span className="item-price">
+                    {owned ? t("items.soldOut") : `${p.price}$`}
                   </span>
-                  <span className="item-price">{p.price}$</span>
                 </div>
               );
             })}

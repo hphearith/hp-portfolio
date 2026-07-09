@@ -135,11 +135,6 @@ export const en = {
         blurb: "Trivia to test\nthy wit, worm.",
         buyLine: "* Test thy wits, worm!",
       },
-      "amber-card": {
-        name: "Amber Card",
-        blurb: "A mysteryous carde.\nContacteth its owner.",
-        buyLine: "* Useth it to reach me, worm. Or don't.",
-      },
     },
 
     aria: {

@@ -430,9 +430,15 @@
   display: inline-flex;
   justify-content: center;
 }
+.item-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 .item-price {
   color: var(--col-fg);
   padding-left: 24px;
+  white-space: nowrap;
 }
 .item-row--sold-out {
   opacity: 0.45;

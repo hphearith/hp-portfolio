@@ -152,7 +152,7 @@ export function talkRowsFor(
 export const PROJECTS: Project[] = [
   {
     id: "resume",
-    price: 50,
+    price: 200,
     link: `${import.meta.env.BASE_URL}resume.pdf`,
     openDirect: true,
   },
@@ -167,11 +167,6 @@ export const PROJECTS: Project[] = [
     price: 50,
     link: "https://quiz-game-group2.netlify.app/",
     openDirect: true,
-  },
-  {
-    id: "amber-card",
-    price: 100,
-    link: "mailto:garnish_kelvin53@icloud.com",
   },
 ];
 
