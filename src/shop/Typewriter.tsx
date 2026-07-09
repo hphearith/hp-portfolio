@@ -27,7 +27,18 @@ type Props = {
   skip?: boolean;
 };
 
-/** Reveals text one character at a time, or instantly if reduced motion. */
+/**
+ * Reveals text one character at a time, or instantly if reduced motion.
+ *
+ * The reveal progress lives in a SINGLE {text, count} state object — never
+ * split it into two useState hooks. With separate hooks, the render-phase
+ * reset on text change could tear under StrictMode's double-invoked render
+ * (the text hook updated, the count reset bailed out), committing a stale
+ * count against the new text. Any page shorter than its predecessor then
+ * counted as already complete: it appeared fully formed with no per-char
+ * reveal, no squeak SFX, and an instant onComplete. One object updates
+ * atomically, so every committed render is internally consistent.
+ */
 export default function Typewriter({
   text,
   speed = 28,
@@ -35,39 +46,32 @@ export default function Typewriter({
   onComplete,
   skip = false,
 }: Props) {
-  const [count, setCount] = useState(0);
-  // tracks which `text` the current `count` belongs to
-  const [seenText, setSeenText] = useState<string | null>(null);
   const reduced = usePrefersReducedMotion();
+  const [typed, setTyped] = useState(() => ({
+    text,
+    count: reduced ? text.length : 0,
+  }));
   const completed = useRef(false);
 
-  // Reset synchronously during render (not in an effect) whenever the text
-  // changes. Doing this in an effect left a one-commit window where the
-  // completion-check effect below could still read the OLD count against
-  // the NEW (often shorter) text, decide it was already "done", and skip
-  // the animation + skip the per-char SFX entirely.
-  if (text !== seenText) {
-    setSeenText(text);
-    setCount(reduced ? text.length : 0);
+  // restart atomically when a new text arrives (render-phase reset)
+  if (typed.text !== text) {
+    setTyped({ text, count: reduced ? text.length : 0 });
     completed.current = false;
   }
 
-  // reduced-motion can toggle mid-line without text changing
+  // instantly reveal all text on skip (or reduced-motion flipping on mid-line)
   useEffect(() => {
-    if (reduced) {
-      setCount(text.length);
+    if (skip || reduced) {
+      setTyped((t) =>
+        t.count >= t.text.length ? t : { ...t, count: t.text.length }
+      );
     }
-  }, [reduced, text]);
+  }, [skip, reduced, text]);
 
-  // instantly reveal all text when skip prop becomes true
+  // Completion + per-char ticking read only the atomic pair (not the text
+  // prop), so they can never judge an old count against a new text.
   useEffect(() => {
-    if (skip) {
-      setCount(text.length);
-    }
-  }, [skip, text.length]);
-
-  useEffect(() => {
-    if (count >= text.length) {
+    if (typed.count >= typed.text.length) {
       if (!completed.current) {
         completed.current = true;
         onComplete?.();
@@ -75,11 +79,13 @@ export default function Typewriter({
       return;
     }
     const id = window.setTimeout(() => {
-      setCount((c) => c + 1);
+      setTyped((t) =>
+        t.count >= t.text.length ? t : { ...t, count: t.count + 1 }
+      );
       onChar?.();
     }, speed);
     return () => window.clearTimeout(id);
-  }, [count, text, speed, onChar, onComplete]);
+  }, [typed, speed, onChar, onComplete]);
 
-  return <span>{text.slice(0, count)}</span>;
+  return <span>{typed.text.slice(0, typed.count)}</span>;
 }

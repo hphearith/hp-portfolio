@@ -257,7 +257,9 @@ export default function ShopScreen({ active = true }: { active?: boolean }) {
   const dialogEl = (
     <div className="dialog-box" onClick={() => dispatch({ type: "ADVANCE" })}>
       <div className="dialog-text" aria-live="polite">
+        {/* key: remount per dialog line so reveal state always starts fresh */}
         <Typewriter
+          key={state.dialog ?? "idle"}
           text={state.dialog ? t(state.dialog) : ""}
           skip={state.dialogReady}
           onChar={() => playSfx("squeak")}
