@@ -11,6 +11,8 @@ export type Project = {
   link: string;
   /** optional thumbnail in /sprites/ */
   thumb?: string;
+  /** on Open, always opens link in a new tab (bypasses LINKS_ENABLED) */
+  openDirect?: boolean;
 };
 
 /** Root command menu (right panel) shown on landing — i18n keys. */
@@ -149,19 +151,22 @@ export function talkRowsFor(
  */
 export const PROJECTS: Project[] = [
   {
-    id: "rouxls-roux",
+    id: "resume",
     price: 50,
-    link: "https://github.com/hphearith",
+    link: `${import.meta.env.BASE_URL}resume.pdf`,
+    openDirect: true,
   },
   {
-    id: "brave-ax",
-    price: 150,
-    link: "https://github.com/hphearith",
+    id: "social-media-app",
+    price: 100,
+    link: "https://space-and-time-social-media.vercel.app",
+    openDirect: true,
   },
   {
-    id: "dainty-scarf",
-    price: 200,
-    link: "https://github.com/hphearith",
+    id: "quiz-game",
+    price: 50,
+    link: "https://quiz-game-group2.netlify.app/",
+    openDirect: true,
   },
   {
     id: "amber-card",

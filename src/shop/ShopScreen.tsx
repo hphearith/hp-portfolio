@@ -197,6 +197,14 @@ export default function ShopScreen({ active = true }: { active?: boolean }) {
     }
   }, [state.linkToOpen]);
 
+  // ---- Side effect: open an owned "openDirect" item in a new tab ----
+  useEffect(() => {
+    if (state.directLink) {
+      window.open(state.directLink, "_blank", "noopener,noreferrer");
+      dispatch({ type: "CLEAR_DIRECT_LINK" });
+    }
+  }, [state.directLink]);
+
   // undefined when the heart is on the buy-list Exit row
   const selected = PROJECTS[state.itemIndex];
   const onBuyExit = state.itemIndex === BUY_EXIT_INDEX;
@@ -532,7 +540,7 @@ export default function ShopScreen({ active = true }: { active?: boolean }) {
             onClick={() => setGreetingSkip(true)}
           >
             <Typewriter
-              text={t("greeting")}
+              text={active ? t("greeting") : ""}
               skip={greetingSkip}
               onChar={() => playSfx("squeak")}
             />
@@ -610,7 +618,6 @@ export default function ShopScreen({ active = true }: { active?: boolean }) {
         )}
         <div className="buy-footer">
           <span className="gold">{state.gold}$</span>
-          <span className="space-count">{t("footer.space")}</span>
         </div>
       </Frame>
       )}

@@ -26,10 +26,6 @@ export const en = {
       exitBlurb: "Leaveth this liste,\nworm.",
     },
 
-    footer: {
-      space: "Space: 12",
-    },
-
     items: {
       soldOut: "(SOLD OUT)",
       empty: "Thou hast bought\nnaught yet, worm.",
@@ -124,20 +120,20 @@ export const en = {
     },
 
     projects: {
-      "rouxls-roux": {
-        name: "RouxlsRoux",
-        blurb: "A worthelesse trinket.\nDoeth nothing. Buyeth anyway.",
+      resume: {
+        name: "Résumé",
+        blurb: "The full scroll of\nmy deeds and skills.",
         buyLine: "* A fine choice, worm! Thou hast TASTE.",
       },
-      "brave-ax": {
-        name: "Brave Ax",
-        blurb: "ATK +10.\nForged for ye who shippeth.",
-        buyLine: "* Swing it at thy bugs, lesser worm!",
+      "social-media-app": {
+        name: "Social Media App",
+        blurb: "A tiny realme where\nworms mingle and post.",
+        buyLine: "* A bold pick, worm! Go forth and mingle.",
       },
-      "dainty-scarf": {
-        name: "DaintyScarf",
-        blurb: "DEF +6.\nMost fashionable. Verye warm.",
-        buyLine: "* It suiteth thee. Barely.",
+      "quiz-game": {
+        name: "Quiz Game",
+        blurb: "Trivia to test\nthy wit, worm.",
+        buyLine: "* Test thy wits, worm!",
       },
       "amber-card": {
         name: "Amber Card",

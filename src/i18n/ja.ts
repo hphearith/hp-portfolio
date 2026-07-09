@@ -32,10 +32,6 @@ export const ja = {
       exitBlurb: "このリストから\n去るのだ、ミミズよ。",
     },
 
-    footer: {
-      space: "スペース: 12",
-    },
-
     items: {
       soldOut: "（うりきれ）",
       empty: "まだ何も\n買っておらぬな、ミミズよ。",
@@ -130,20 +126,20 @@ export const ja = {
     },
 
     projects: {
-      "rouxls-roux": {
-        name: "ルールスルー",
-        blurb: "やくたたずの\nがらくたなり。\n何もせぬ。買え。",
+      resume: {
+        name: "履歴書",
+        blurb: "我が功績と技の\n巻物なり。",
         buyLine: "＊よい選択だ、ミミズよ！おぬし、センスがあるな。",
       },
-      "brave-ax": {
-        name: "ゆうしゃのオノ",
-        blurb: "こうげき +10。\n出荷する者のために\n鍛えられし一品。",
-        buyLine: "＊バグに振り下ろすがよい、下等なミミズよ！",
+      "social-media-app": {
+        name: "SNSアプリ",
+        blurb: "ミミズたちが\n語らう小さき世界。",
+        buyLine: "＊よい度胸だ、ミミズよ！さあ交わるがよい。",
       },
-      "dainty-scarf": {
-        name: "おじょうマフラー",
-        blurb: "ぼうぎょ +6。\n最高におしゃれ。\nとても暖かし。",
-        buyLine: "＊おぬしに似合うぞ……かろうじてな。",
+      "quiz-game": {
+        name: "クイズゲーム",
+        blurb: "おぬしの知恵を\n試すクイズなり。",
+        buyLine: "＊おぬしの知恵、試させてもらうぞ！",
       },
       "amber-card": {
         name: "コハクのカード",

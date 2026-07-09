@@ -490,10 +490,6 @@
   color: var(--col-fg);
   font-size: 30px;
 }
-.space-count {
-  font-size: 22px;
-  opacity: 0.85;
-}
 .dialog-cue {
   font-size: 22px;
   opacity: 0.7;

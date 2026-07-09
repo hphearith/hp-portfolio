@@ -1,4 +1,5 @@
 import { PROJECTS, ROOT_COMMANDS, CMD_BUY, CMD_TALK, talkRowsFor, talkPageCount, TALK_MORE_ROW_INDEX, STARTING_GOLD } from "./items";
+import type { Project } from "./items";
 
 /** number of project rows in the buy list */
 export const ITEM_COUNT = PROJECTS.length;
@@ -67,6 +68,8 @@ export type ShopState = {
   itemsIndex: number;
   /** current gold, deducted on each purchase */
   gold: number;
+  /** link of an owned "openDirect" project queued to open in a new tab */
+  directLink: string | null;
 };
 
 export const initialShopState: ShopState = {
@@ -89,6 +92,7 @@ export const initialShopState: ShopState = {
   ownedIds: [],
   itemsIndex: 0,
   gold: STARTING_GOLD,
+  directLink: null,
 };
 
 export type ShopAction =
@@ -103,14 +107,23 @@ export type ShopAction =
   | { type: "POINT_ITEMS"; index: number }
   | { type: "SET_CONFIRM"; yes: boolean }
   | { type: "CLEAR_LINK" }
+  | { type: "CLEAR_DIRECT_LINK" }
   | { type: "DIALOG_SKIP" };
 
 const wrap = (n: number, len: number) => ((n % len) + len) % len;
+
+/** owned projects in PROJECTS order — mirrors the Items-screen list in ShopScreen. */
+function ownedProjects(state: ShopState): Project[] {
+  return PROJECTS.filter((p) => state.ownedIds.includes(p.id));
+}
 
 export function shopReducer(state: ShopState, action: ShopAction): ShopState {
   switch (action.type) {
     case "CLEAR_LINK":
       return { ...state, linkToOpen: null };
+
+    case "CLEAR_DIRECT_LINK":
+      return { ...state, directLink: null };
 
     case "MOVE_UP":
       if (state.phase === "root") {
@@ -318,7 +331,13 @@ function selectInMenu(state: ShopState): ShopState {
     return { ...state, phase: "itemOpen", confirmYes: true };
   }
   if (state.phase === "itemOpen") {
-    // Opening isn't wired up yet either way — just return to the item list.
+    if (state.confirmYes) {
+      const project = ownedProjects(state)[state.itemsIndex];
+      if (project?.openDirect) {
+        return { ...state, phase: "items", directLink: project.link };
+      }
+      // Other items aren't wired up to navigate away yet.
+    }
     return { ...state, phase: "items" };
   }
   return state;
