@@ -313,6 +313,12 @@
   width: 86px; /* (270 - 242) * 3 */
   height: 66px; /* (29 - 7) * 3 */
 }
+.art-hotspot--github {
+  left: 555px; /* 185 * 3 */
+  top: 130px; /* 45 * 3 */
+  width: 33px; /* (196 - 185) * 3 */
+  height: 29px; /* (54 - 45) * 3 */
+}
 .art-claude {
   position: absolute;
   inset: 0;

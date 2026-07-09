@@ -376,6 +376,13 @@ export default function ShopScreen({ active = true }: { active?: boolean }) {
             rel="noopener noreferrer"
             aria-label="Moon"
           />
+          <a
+            className="art-hotspot art-hotspot--github"
+            href="https://github.com/hphearith"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+          />
         </div>
       </div>
 
