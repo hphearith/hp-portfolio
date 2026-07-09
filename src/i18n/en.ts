@@ -8,6 +8,14 @@ export const en = {
     greeting:
       "* Hello! \nWelcome to my portfolio. \nHave a look around.",
 
+    greetingIdle: {
+      mute: "* You can click Ctrl + M to mute the music!",
+      explore: "* Have a good look around the place... you might find something interesting.",
+      walk: "* Today's a good day for a walk.",
+      wares: "* Please have a look at my wares.",
+      welcome: "* Welcome to my portfolio. \nHave a look around.",
+    },
+
     commands: {
       buy: "Buy",
       talk: "Talk",

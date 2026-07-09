@@ -15,6 +15,7 @@ import {
 } from "./items";
 import type { FaceKey, Project } from "./items";
 import { loadReadTopics, saveReadTopics } from "./talkStorage";
+import { loadPurchaseState, savePurchaseState } from "./shopStorage";
 import { initialShopState, shopReducer, BUY_EXIT_INDEX } from "./shopReducer";
 import type { ShopState } from "./shopReducer";
 import "./shop.css";
@@ -56,6 +57,22 @@ const DIALOG_FACE_SPRITES = [
   facepoutSprite,
 ];
 
+// idle-greeting rotation: after 10s of sitting at the root greeting, and
+// every 10s thereafter, swap in a random line from this pool (never the
+// one just shown).
+const IDLE_GREETING_KEYS = [
+  "greetingIdle.mute",
+  "greetingIdle.explore",
+  "greetingIdle.walk",
+  "greetingIdle.wares",
+  "greetingIdle.welcome",
+];
+
+function pickIdleGreetingKey(exclude: string | null) {
+  const pool = IDLE_GREETING_KEYS.filter((k) => k !== exclude);
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
 function faceForDialog(dialogKey: string) {
   let hash = 0;
   for (let i = 0; i < dialogKey.length; i++) {
@@ -86,11 +103,13 @@ function faceForState(state: ShopState) {
 
 export default function ShopScreen({ active = true }: { active?: boolean }) {
   const { t } = useTranslation();
-  const [state, dispatch] = useReducer(shopReducer, initialShopState, (base) => ({
-    ...base,
-    readTopics: loadReadTopics(),
-  }));
+  const [state, dispatch] = useReducer(shopReducer, initialShopState, (base) => {
+    const { ownedIds, gold } = loadPurchaseState(base.gold);
+    return { ...base, readTopics: loadReadTopics(), ownedIds, gold };
+  });
   const [greetingSkip, setGreetingSkip] = useState(false);
+  const [idleGreetingKey, setIdleGreetingKey] = useState<string | null>(null);
+  const idleGreetingKeyRef = useRef<string | null>(null);
   const [muted, setMuted] = useState(isMuted());
 
   // speaker sprite freezes on speaker1 (no cycling) while music is muted
@@ -111,12 +130,31 @@ export default function ShopScreen({ active = true }: { active?: boolean }) {
     saveReadTopics(state.readTopics);
   }, [state.readTopics]);
 
+  // persist owned items + remaining gold on every change
+  useEffect(() => {
+    savePurchaseState({ ownedIds: state.ownedIds, gold: state.gold });
+  }, [state.ownedIds, state.gold]);
+
   // reset greeting typewriter when returning to root
   useEffect(() => {
     if (state.phase === "root") {
       setGreetingSkip(false);
+      setIdleGreetingKey(null);
+      idleGreetingKeyRef.current = null;
     }
   }, [state.phase]);
+
+  // rotate to a random idle line every 10s while the greeting sits idle at root
+  useEffect(() => {
+    if (state.phase !== "root" || !active) return;
+    const id = window.setInterval(() => {
+      const next = pickIdleGreetingKey(idleGreetingKeyRef.current);
+      idleGreetingKeyRef.current = next;
+      setIdleGreetingKey(next);
+      setGreetingSkip(false);
+    }, 15000);
+    return () => window.clearInterval(id);
+  }, [state.phase, active]);
 
   // ---- SFX: react to state transitions ----
   const prevRoot = useRef(state.rootIndex);
@@ -539,7 +577,7 @@ export default function ShopScreen({ active = true }: { active?: boolean }) {
             onClick={() => setGreetingSkip(true)}
           >
             <Typewriter
-              text={active ? t("greeting") : ""}
+              text={active ? t(idleGreetingKey ?? "greeting") : ""}
               skip={greetingSkip}
               onChar={() => playSfx("squeak")}
             />
