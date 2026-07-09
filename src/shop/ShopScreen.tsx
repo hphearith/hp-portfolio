@@ -12,6 +12,8 @@ import {
   TALK_EXIT_INDEX,
   TALK_ABOUT_INDEX,
   TALK_ABOUT_FACES,
+  TALK_EXPERIENCE_INDEX,
+  TALK_EXPERIENCE_FACES,
 } from "./items";
 import type { Project } from "./items";
 import { initialShopState, shopReducer, BUY_EXIT_INDEX } from "./shopReducer";
@@ -63,9 +65,12 @@ function faceForDialog(dialogKey: string) {
   return DIALOG_FACE_SPRITES[hash % DIALOG_FACE_SPRITES.length];
 }
 
-// "Tell me about yourself" scripts a specific face per page instead of the
-// hash-based pick above.
-const FACE_SPRITE_BY_KEY: Record<(typeof TALK_ABOUT_FACES)[number], string> = {
+// "Tell me about yourself" and "About your experience" script a specific
+// face per page instead of the hash-based pick above.
+const FACE_SPRITE_BY_KEY: Record<
+  (typeof TALK_ABOUT_FACES)[number] | (typeof TALK_EXPERIENCE_FACES)[number],
+  string
+> = {
   base: facebaseSprite,
   happy: facehappySprite,
   mlem: facemlemSprite,
@@ -77,6 +82,9 @@ function faceForState(state: ShopState) {
   if (!state.dialog) return facebaseSprite;
   if (state.dialogReturn === "talk" && state.talkIndex === TALK_ABOUT_INDEX) {
     return FACE_SPRITE_BY_KEY[TALK_ABOUT_FACES[state.dialogPage] ?? "base"];
+  }
+  if (state.dialogReturn === "talk" && state.talkIndex === TALK_EXPERIENCE_INDEX) {
+    return FACE_SPRITE_BY_KEY[TALK_EXPERIENCE_FACES[state.dialogPage] ?? "base"];
   }
   return faceForDialog(state.dialog);
 }

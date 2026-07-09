@@ -32,11 +32,14 @@ export const TALK_ROWS = TALK_TOPIC_COUNT + 1;
 /** Index of the "Tell me about yourself" topic. */
 export const TALK_ABOUT_INDEX = 0;
 
+/** Index of the "About your experience" topic. */
+export const TALK_EXPERIENCE_INDEX = 1;
+
 /**
  * Page count per talk topic. Topics with 1 page use a single `text` i18n
  * key; topics with >1 use `pages.<n>` keys instead (see en/ja.ts).
  */
-export const TALK_TOPIC_PAGE_COUNT = [8, 1, 1, 1];
+export const TALK_TOPIC_PAGE_COUNT = [8, 7, 1, 1];
 
 /** Face sprite key shown on each page of the "about yourself" topic. */
 export const TALK_ABOUT_FACES = [
@@ -48,6 +51,17 @@ export const TALK_ABOUT_FACES = [
   "neutral",
   "mlem",
   "base",
+] as const;
+
+/** Face sprite key shown on each page of the "about your experience" topic. */
+export const TALK_EXPERIENCE_FACES = [
+  "base",
+  "mlem",
+  "base",
+  "sweat",
+  "base",
+  "happy",
+  "mlem",
 ] as const;
 
 /**

@@ -6,7 +6,7 @@
 export const en = {
   translation: {
     greeting:
-      "* Greetings! \nWelcome to my portfolio. \nHave a look around.",
+      "* Hello! \nWelcome to my portfolio. \nHave a look around.",
 
     commands: {
       buy: "Buy",
@@ -45,20 +45,26 @@ export const en = {
         {
           label: "Tell me about yourself",
           pages: [
-            "* My name is Heng Phearith.\nI am a 3rd year computer\nscience student studying\nat AUPP.",
-            "* I am also a student of\nthe Japanese IT Pathway\nProgram at AUPP, where I'm\nbeing trained to be an elite\nIT professional, with the\nprospects of working in Japan.",
-            "* I like to watch manga\nand watch Youtube videos\nin my spare time.",
+            "* My name is Heng Phearith.\nI'm a 3rd year computer\nscience student studying\nat AUPP.",
+            "* I also study Japanese with the plan of working in Japan someday.",
+            "* I like to read manga\nand watch Youtube videos\nin my spare time.",
             "* Well... *if* I have\nspare time.",
-            "* Recently, doing projects\nand learning Japanese has\nbasically become my hobby.",
-            "* Kinda grim if you\nthink about it...",
-            "* But, I am having fun\nso it's alright.",
+            "* Recently, doing projects\nand studying Japanese has\nbasically become my hobby.",
+            "* Kinda sad if you\nthink about it...",
+            "* But, I'm having fun\nso it's alright.",
             "* Nice to meet you.",
           ],
         },
         {
           label: "About your experience",
           pages: [
-            "* I hath crafted manye\npuzzles for the King\nof Spades himself.\nNo worm canst solve\nthem — except me.",
+            "* Most of the projects\nI've done so far are\nWeb Development projects.",
+            "* This nice and cool\nportfolio that you're in\nright now being one of them.",
+            "* Professionally, I'm currently\nan intern at a Japanese\nIT solutions company called\nNextMake, mainly working on\nCRUD management systems.",
+            "* Details about that\ncan't be shared, though.\nSorry.",
+            "* Personally, I've\nworked in a team to\ncreate a quiz game as\nwell as a mini social\nmedia platform.",
+            "* Those ones you\ncan actually view.",
+            "* I've put them up\nfor sale here.\nBe sure to buy them!",
           ],
         },
         {
