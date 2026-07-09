@@ -8,18 +8,13 @@ import { playSfx, preloadSfx, isMuted, subscribeMuted } from "../audio/sfx";
 import {
   PROJECTS,
   ROOT_COMMANDS,
-  TALK_TOPIC_COUNT,
-  TALK_EXIT_INDEX,
-  TALK_ABOUT_INDEX,
-  TALK_ABOUT_FACES,
-  TALK_EXPERIENCE_INDEX,
-  TALK_EXPERIENCE_FACES,
-  TALK_EDUCATION_INDEX,
-  TALK_EDUCATION_FACES,
-  TALK_AMBITIONS_INDEX,
-  TALK_AMBITIONS_FACES,
+  TALK_TOPICS,
+  talkRowsFor,
+  isTopicNew,
+  talkPageHasNew,
 } from "./items";
-import type { Project } from "./items";
+import type { FaceKey, Project } from "./items";
+import { loadReadTopics, saveReadTopics } from "./talkStorage";
 import { initialShopState, shopReducer, BUY_EXIT_INDEX } from "./shopReducer";
 import type { ShopState } from "./shopReducer";
 import "./shop.css";
@@ -69,42 +64,32 @@ function faceForDialog(dialogKey: string) {
   return DIALOG_FACE_SPRITES[hash % DIALOG_FACE_SPRITES.length];
 }
 
-// "Tell me about yourself" and "About your experience" script a specific
-// face per page instead of the hash-based pick above.
-const FACE_SPRITE_BY_KEY: Record<
-  | (typeof TALK_ABOUT_FACES)[number]
-  | (typeof TALK_EXPERIENCE_FACES)[number]
-  | (typeof TALK_EDUCATION_FACES)[number]
-  | (typeof TALK_AMBITIONS_FACES)[number],
-  string
-> = {
+// Talk topics script a specific face per page (TALK_TOPICS[n].faces)
+// instead of the hash-based pick above.
+const FACE_SPRITE_BY_KEY: Record<FaceKey, string> = {
   base: facebaseSprite,
   happy: facehappySprite,
   mlem: facemlemSprite,
   neutral: faceneutralSprite,
+  pout: facepoutSprite,
   sweat: facesweatSprite,
 };
 
 function faceForState(state: ShopState) {
   if (!state.dialog) return facebaseSprite;
-  if (state.dialogReturn === "talk" && state.talkIndex === TALK_ABOUT_INDEX) {
-    return FACE_SPRITE_BY_KEY[TALK_ABOUT_FACES[state.dialogPage] ?? "base"];
-  }
-  if (state.dialogReturn === "talk" && state.talkIndex === TALK_EXPERIENCE_INDEX) {
-    return FACE_SPRITE_BY_KEY[TALK_EXPERIENCE_FACES[state.dialogPage] ?? "base"];
-  }
-  if (state.dialogReturn === "talk" && state.talkIndex === TALK_EDUCATION_INDEX) {
-    return FACE_SPRITE_BY_KEY[TALK_EDUCATION_FACES[state.dialogPage] ?? "base"];
-  }
-  if (state.dialogReturn === "talk" && state.talkIndex === TALK_AMBITIONS_INDEX) {
-    return FACE_SPRITE_BY_KEY[TALK_AMBITIONS_FACES[state.dialogPage] ?? "base"];
+  if (state.dialogReturn === "talk") {
+    const faces = TALK_TOPICS[state.talkTopic]?.faces;
+    return FACE_SPRITE_BY_KEY[faces?.[state.dialogPage] ?? "base"];
   }
   return faceForDialog(state.dialog);
 }
 
 export default function ShopScreen({ active = true }: { active?: boolean }) {
   const { t } = useTranslation();
-  const [state, dispatch] = useReducer(shopReducer, initialShopState);
+  const [state, dispatch] = useReducer(shopReducer, initialShopState, (base) => ({
+    ...base,
+    readTopics: loadReadTopics(),
+  }));
   const [greetingSkip, setGreetingSkip] = useState(false);
   const [muted, setMuted] = useState(isMuted());
 
@@ -120,6 +105,11 @@ export default function ShopScreen({ active = true }: { active?: boolean }) {
   useEffect(() => {
     preloadSfx();
   }, []);
+
+  // persist talk read-state (reducer stays pure; write is idempotent on mount)
+  useEffect(() => {
+    saveReadTopics(state.readTopics);
+  }, [state.readTopics]);
 
   // reset greeting typewriter when returning to root
   useEffect(() => {
@@ -494,35 +484,40 @@ export default function ShopScreen({ active = true }: { active?: boolean }) {
           </div>
         ) : state.phase === "talk" ? (
           <div className="item-list" role="menu" aria-label={t("aria.talkTopics")}>
-            {Array.from({ length: TALK_TOPIC_COUNT }, (_, i) => (
-              <div
-                key={i}
-                className="item-row"
-                role="menuitem"
-                aria-current={state.talkIndex === i ? "true" : undefined}
-                onClick={() => tapTalk(i)}
-              >
-                <span className="item-cursor">
-                  {state.talkIndex === i && <Heart />}
-                </span>
-                <span className="item-name">{t(`talk.topics.${i}.label`)}</span>
-                <span className="item-price" />
-              </div>
-            ))}
-            <div
-              className="item-row"
-              role="menuitem"
-              aria-current={
-                state.talkIndex === TALK_EXIT_INDEX ? "true" : undefined
-              }
-              onClick={() => tapTalk(TALK_EXIT_INDEX)}
-            >
-              <span className="item-cursor">
-                {state.talkIndex === TALK_EXIT_INDEX && <Heart />}
-              </span>
-              <span className="item-name">{t("commands.exit")}</span>
-              <span className="item-price" />
-            </div>
+            {talkRowsFor(state.talkPage, state.readTopics).map((row, i) => {
+              // yellow = unlocked-but-unread topic; More... glows while one
+              // is waiting on the next page.
+              const isNew =
+                row.kind === "topic"
+                  ? isTopicNew(row.topic, state.readTopics)
+                  : row.kind === "more"
+                  ? talkPageHasNew(1, state.readTopics)
+                  : false;
+              const label =
+                row.kind === "topic"
+                  ? t(`talk.topics.${row.topic}.label`)
+                  : row.kind === "more"
+                  ? t("talk.more")
+                  : row.kind === "back"
+                  ? t("talk.back")
+                  : t("commands.exit");
+              return (
+                <div
+                  key={row.kind === "topic" ? `topic-${row.topic}` : row.kind}
+                  className={`item-row${isNew ? " item-row--new" : ""}`}
+                  role="menuitem"
+                  aria-current={state.talkIndex === i ? "true" : undefined}
+                  aria-label={isNew ? `${label} (${t("talk.newHint")})` : undefined}
+                  onClick={() => tapTalk(i)}
+                >
+                  <span className="item-cursor">
+                    {state.talkIndex === i && <Heart />}
+                  </span>
+                  <span className="item-name">{label}</span>
+                  <span className="item-price" />
+                </div>
+              );
+            })}
           </div>
         ) : (
           <div

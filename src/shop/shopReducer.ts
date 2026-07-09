@@ -1,4 +1,4 @@
-import { PROJECTS, ROOT_COMMANDS, CMD_BUY, CMD_TALK, TALK_EXIT_INDEX, TALK_ROWS, TALK_TOPIC_PAGE_COUNT, STARTING_GOLD } from "./items";
+import { PROJECTS, ROOT_COMMANDS, CMD_BUY, CMD_TALK, talkRowsFor, talkPageCount, TALK_MORE_ROW_INDEX, STARTING_GOLD } from "./items";
 
 /** number of project rows in the buy list */
 export const ITEM_COUNT = PROJECTS.length;
@@ -50,8 +50,15 @@ export type ShopState = {
   dialogPage: number;
   /** bumped when a dialog moves to its next page (not on dismiss/skip) — drives the "select" sfx */
   dialogPageTick: number;
-  /** highlighted talk topic 0..TALK_EXIT_INDEX (talk phase) */
+  /** highlighted row in the current talk-menu page (talk phase) */
   talkIndex: number;
+  /** current talk-menu page: 0 = first, 1 = the "More..." page */
+  talkPage: 0 | 1;
+  /** topic index (into TALK_TOPICS / i18n talk.topics) of the open talk
+      dialog — meaningful only while dialogReturn === "talk" */
+  talkTopic: number;
+  /** topic indices read to their final page (persisted to localStorage) */
+  readTopics: number[];
   /** bumped on every committed menu selection — drives the "select" sfx */
   selectTick: number;
   /** ids of purchased projects (one stock each — sold out once bought) */
@@ -75,6 +82,9 @@ export const initialShopState: ShopState = {
   dialogPage: 0,
   dialogPageTick: 0,
   talkIndex: 0,
+  talkPage: 0,
+  talkTopic: 0,
+  readTopics: [],
   selectTick: 0,
   ownedIds: [],
   itemsIndex: 0,
@@ -113,7 +123,8 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
         return { ...state, confirmYes: !state.confirmYes };
       }
       if (state.phase === "talk") {
-        return { ...state, talkIndex: wrap(state.talkIndex - 1, TALK_ROWS) };
+        const rows = talkRowsFor(state.talkPage, state.readTopics).length;
+        return { ...state, talkIndex: wrap(state.talkIndex - 1, rows) };
       }
       if (state.phase === "items") {
         const rows = state.ownedIds.length + 1;
@@ -132,7 +143,8 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
         return { ...state, confirmYes: !state.confirmYes };
       }
       if (state.phase === "talk") {
-        return { ...state, talkIndex: wrap(state.talkIndex + 1, TALK_ROWS) };
+        const rows = talkRowsFor(state.talkPage, state.readTopics).length;
+        return { ...state, talkIndex: wrap(state.talkIndex + 1, rows) };
       }
       if (state.phase === "items") {
         const rows = state.ownedIds.length + 1;
@@ -153,7 +165,10 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
       return state;
 
     case "POINT_TALK":
-      if (state.phase === "talk" && action.index < TALK_ROWS) {
+      if (
+        state.phase === "talk" &&
+        action.index < talkRowsFor(state.talkPage, state.readTopics).length
+      ) {
         return { ...state, talkIndex: action.index };
       }
       return state;
@@ -207,6 +222,10 @@ export function shopReducer(state: ShopState, action: ShopAction): ShopState {
         return dismissDialog(state);
       }
       if (state.phase === "talk") {
+        // Esc on the More... page backs up one page, not out of Talk.
+        if (state.talkPage === 1) {
+          return { ...state, talkPage: 0, talkIndex: TALK_MORE_ROW_INDEX };
+        }
         return { ...state, phase: "root" };
       }
       if (state.phase === "buy") {
@@ -233,7 +252,7 @@ function selectInMenu(state: ShopState): ShopState {
       return { ...state, phase: "buy", itemIndex: 0 };
     }
     if (state.rootIndex === CMD_TALK) {
-      return { ...state, phase: "talk", talkIndex: 0 };
+      return { ...state, phase: "talk", talkIndex: 0, talkPage: 0 };
     }
     // Items
     return { ...state, phase: "items", itemsIndex: 0 };
@@ -269,17 +288,27 @@ function selectInMenu(state: ShopState): ShopState {
     return { ...state, phase: "buy" };
   }
   if (state.phase === "talk") {
-    if (state.talkIndex === TALK_EXIT_INDEX) {
-      return { ...state, phase: "root" };
+    const row = talkRowsFor(state.talkPage, state.readTopics)[state.talkIndex];
+    if (!row) return state;
+    switch (row.kind) {
+      case "exit":
+        return { ...state, phase: "root" };
+      case "more":
+        return { ...state, talkPage: 1, talkIndex: 0 };
+      case "back":
+        // land back on the More... row the visitor came through
+        return { ...state, talkPage: 0, talkIndex: TALK_MORE_ROW_INDEX };
+      case "topic":
+        return {
+          ...state,
+          phase: "dialog",
+          dialog: `talk.topics.${row.topic}.pages.0`,
+          dialogReturn: "talk",
+          dialogReady: false,
+          dialogPage: 0,
+          talkTopic: row.topic,
+        };
     }
-    return {
-      ...state,
-      phase: "dialog",
-      dialog: `talk.topics.${state.talkIndex}.pages.0`,
-      dialogReturn: "talk",
-      dialogReady: false,
-      dialogPage: 0,
-    };
   }
   if (state.phase === "items") {
     // the Exit row at the bottom backs out to the root command menu
@@ -301,12 +330,12 @@ function selectInMenu(state: ShopState): ShopState {
  * -> page step ("select" sfx) bumps dialogPageTick — dismissing does not.
  */
 function advanceOrDismissDialog(state: ShopState): ShopState {
-  const pageCount = TALK_TOPIC_PAGE_COUNT[state.talkIndex] ?? 1;
+  const pageCount = talkPageCount(state.talkTopic);
   if (state.dialogReturn === "talk" && state.dialogPage < pageCount - 1) {
     const dialogPage = state.dialogPage + 1;
     return {
       ...state,
-      dialog: `talk.topics.${state.talkIndex}.pages.${dialogPage}`,
+      dialog: `talk.topics.${state.talkTopic}.pages.${dialogPage}`,
       dialogPage,
       dialogReady: false,
       dialogPageTick: state.dialogPageTick + 1,
@@ -317,8 +346,20 @@ function advanceOrDismissDialog(state: ShopState): ShopState {
 
 /** Leave the dialog box, returning to its origin and firing any queued link. */
 function dismissDialog(state: ShopState): ShopState {
+  // A talk topic dismissed from its final page counts as read (this also
+  // covers Esc while the last page is up — CANCEL comes straight here).
+  // The dialogReturn gate keeps buy dialogs away from readTopics.
+  let readTopics = state.readTopics;
+  if (
+    state.dialogReturn === "talk" &&
+    state.dialogPage >= talkPageCount(state.talkTopic) - 1 &&
+    !readTopics.includes(state.talkTopic)
+  ) {
+    readTopics = [...readTopics, state.talkTopic];
+  }
   return {
     ...state,
+    readTopics,
     phase: state.dialogReturn,
     dialog: null,
     pendingLink: null,

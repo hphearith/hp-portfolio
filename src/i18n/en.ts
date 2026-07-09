@@ -41,6 +41,9 @@ export const en = {
     },
 
     talk: {
+      more: "More...",
+      back: "Back",
+      newHint: "new topic",
       topics: [
         {
           label: "Tell me about yourself",
@@ -90,6 +93,31 @@ export const en = {
             "* I want to do\nsomething about it.",
             "* Perhaps through the\nexperience and skills I'll\nbe obtaining while working\nin Japan, I might have\na chance to make a\nreal difference.",
             "* I'm willing to plunge\nhead-first into it when\nthe opportunity arises.",
+          ],
+        },
+        {
+          label: "About this portfolio",
+          pages: [
+            "* Oh, you're curious\nabout this place?",
+            "* This portfolio is\nmodeled after a shop\nfrom DELTARUNE, one of\nmy favorite games.",
+            "* I figured a portfolio\nshould *show* what I can\nbuild, not just list it.",
+            "* Under the hood, it's\nbuilt with React and\nTypeScript, plus i18next\nfor the Japanese you can\nswitch to up there.",
+            "* The fonts, sprites and\nsounds are Toby Fox's\nwork. Full credit to him.",
+            "* The dialogue system\ntyping this out, though?\nBuilt it myself.\nIt fought back.",
+            "* Kinda proud of\nthis one, honestly.",
+            "* Take your time\nlooking around.",
+          ],
+        },
+        {
+          label: "More about yourself",
+          pages: [
+            "* Huh? You want to\nknow *more* about me?",
+            "* I'm flattered.\nLet's see...",
+            "* Between university,\nthe internship, and\nJapanese study, my\ndays are pretty packed.",
+            "* But seeing a project\ncome together at the end\nmakes it all worth it.",
+            "* Even this shop was\none of those projects\nonce. Now it's talking\nto you.",
+            "* If you've read this\nfar, we're practically\nfriends already.",
+            "* So, friend...\ncare to browse my\nwares one more time?",
           ],
         },
       ],

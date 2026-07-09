@@ -436,6 +436,12 @@
   opacity: 0.6;
   cursor: default;
 }
+/* Unlocked-but-unread talk topic (and the More... row while one hides
+   behind it). Scoped to .item-name so the fallback ♥ glyph keeps its
+   own color. */
+.item-row--new .item-name {
+  color: var(--col-yellow);
+}
 
 /* ---- Right panel: command menu (Buy/Talk/Exit) or buy prompt ---- */
 .buy-panel {
