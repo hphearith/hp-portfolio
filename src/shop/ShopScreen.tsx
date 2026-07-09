@@ -66,6 +66,7 @@ const IDLE_GREETING_KEYS = [
   "greetingIdle.walk",
   "greetingIdle.wares",
   "greetingIdle.welcome",
+  "greetingIdle.lang",
 ];
 
 function pickIdleGreetingKey(exclude: string | null) {

@@ -19,6 +19,7 @@ export const ja = {
       explore: "＊このばしょをよくみてまわるのだ…おもしろいものがみつかるやもしれぬ。",
       walk: "＊天気がいいから散歩しましょう。",
       wares: "＊わがしなものを、とくとみるがよい。",
+      lang: "＊Ctrl + Jで、げんごをきりかえられるぞ。",
       welcome: "＊わがみごとなるショッペへ\nようこそなり。",
     },
 
@@ -159,7 +160,7 @@ export const ja = {
       shopkeeper: "店主",
       mute: "ミュート",
       unmute: "ミュート解除",
-      switchLang: "英語に切り替え",
+      switchLang: "英語に切り替え（Ctrl + J）",
       portfolio: "ポートフォリオ作品",
     },
 

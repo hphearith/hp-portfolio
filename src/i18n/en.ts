@@ -10,9 +10,10 @@ export const en = {
 
     greetingIdle: {
       mute: "* You can click Ctrl + M to mute the music!",
-      explore: "* Have a good look around the place... you might find something interesting.",
+      explore: "* Try clicking around this place... you might find something interesting.",
       walk: "* Today's a good day for a walk.",
       wares: "* Please have a look at my wares.",
+      lang: "* You can switch languages with Ctrl + J.",
       welcome: "* Welcome to my portfolio. \nHave a look around.",
     },
 
@@ -24,20 +25,20 @@ export const en = {
     },
 
     confirm: {
-      prompt: "Buyeth for\n{{price}}$ ?",
+      prompt: "Buy for\n{{price}}$ ?",
       yes: "Yes",
       no: "No",
     },
 
     info: {
       exitTitle: "Exit",
-      exitBlurb: "Leaveth this liste,\nworm.",
+      exitBlurb: "Leave this list.",
     },
 
     items: {
       soldOut: "(SOLD OUT)",
-      empty: "Thou hast bought\nnaught yet, worm.",
-      openPrompt: "Openeth it,\nworm?",
+      empty: "You haven't bought anything yet.",
+      openPrompt: "Open it?",
     },
 
     loading: {
@@ -130,18 +131,18 @@ export const en = {
     projects: {
       resume: {
         name: "Résumé",
-        blurb: "The full scroll of\nmy deeds and skills.",
-        buyLine: "* A fine choice, worm! Thou hast TASTE.",
+        blurb: "My real resume that I shouldn't put on here.",
+        buyLine: "* Have fun with my personal information!",
       },
       "social-media-app": {
         name: "Social Media App",
-        blurb: "A tiny realme where\nworms mingle and post.",
-        buyLine: "* A bold pick, worm! Go forth and mingle.",
+        blurb: "A mini social media platform\nI built with friends.",
+        buyLine: "* Try posting something there!",
       },
       "quiz-game": {
         name: "Quiz Game",
-        blurb: "Trivia to test\nthy wit, worm.",
-        buyLine: "* Test thy wits, worm!",
+        blurb: "Test your Japanese knowledge with this\nquiz game.",
+        buyLine: "* Get a new high score!",
       },
     },
 
@@ -153,12 +154,12 @@ export const en = {
       shopkeeper: "The shopkeeper",
       mute: "Mute",
       unmute: "Unmute",
-      switchLang: "Switch language to Japanese",
+      switchLang: "Switch language to Japanese (Ctrl + J)",
       portfolio: "Portfolio projects",
     },
 
     seo: {
-      title: "Hearith — Developer Portfolio",
+      title: "Phearith — Developer Portfolio",
       tagline:
         "A Deltarune-style portfolio shop. Each shop ware links to a real project.",
     },
