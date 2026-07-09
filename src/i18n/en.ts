@@ -46,7 +46,7 @@ export const en = {
           label: "Tell me about yourself",
           pages: [
             "* My name is Heng Phearith.\nI'm a third-year Computer\nScience student studying\nat AUPP.",
-            "* I also study Japanese with the plan of working in Japan someday.",
+            "* I also study Japanese with the plan of working in Japan soon.",
             "* I like to read manga\nand watch Youtube videos\nin my spare time.",
             "* Well... *if* I have\nspare time.",
             "* Recently, doing projects\nand studying Japanese has\nbasically become my hobby.",
@@ -82,7 +82,14 @@ export const en = {
         {
           label: "About your ambitions",
           pages: [
-            "* I shalt becometh the\ngreatest puzzle-master\nin all the land.\nThen every worm\nwilst respect me!",
+            "* Right now, I'm aiming\nto work in Japan as\na Full-Stack Web Developer\nafter graduating from University.",
+            "* It is currently the\nmost natural next step\nfor me.",
+            "* If we're talking about\nthe far future though,\nI'm thinking that it would\nbe great if I could\nconnect my field of IT\nto education.",
+            "* Here in Cambodia,\neducation is one of\nthe biggest challenges.",
+            "* There are countless of\nchildren out there who\nare just not getting the\neducation that they deserve.",
+            "* I want to do\nsomething about it.",
+            "* Perhaps through the\nexperience and skills I'll\nbe obtaining while working\nin Japan, I might have\na chance to make a\nreal difference.",
+            "* I'm willing to plunge\nhead-first into it when\nthe opportunity arises.",
           ],
         },
       ],

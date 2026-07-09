@@ -16,6 +16,8 @@ import {
   TALK_EXPERIENCE_FACES,
   TALK_EDUCATION_INDEX,
   TALK_EDUCATION_FACES,
+  TALK_AMBITIONS_INDEX,
+  TALK_AMBITIONS_FACES,
 } from "./items";
 import type { Project } from "./items";
 import { initialShopState, shopReducer, BUY_EXIT_INDEX } from "./shopReducer";
@@ -72,7 +74,8 @@ function faceForDialog(dialogKey: string) {
 const FACE_SPRITE_BY_KEY: Record<
   | (typeof TALK_ABOUT_FACES)[number]
   | (typeof TALK_EXPERIENCE_FACES)[number]
-  | (typeof TALK_EDUCATION_FACES)[number],
+  | (typeof TALK_EDUCATION_FACES)[number]
+  | (typeof TALK_AMBITIONS_FACES)[number],
   string
 > = {
   base: facebaseSprite,
@@ -92,6 +95,9 @@ function faceForState(state: ShopState) {
   }
   if (state.dialogReturn === "talk" && state.talkIndex === TALK_EDUCATION_INDEX) {
     return FACE_SPRITE_BY_KEY[TALK_EDUCATION_FACES[state.dialogPage] ?? "base"];
+  }
+  if (state.dialogReturn === "talk" && state.talkIndex === TALK_AMBITIONS_INDEX) {
+    return FACE_SPRITE_BY_KEY[TALK_AMBITIONS_FACES[state.dialogPage] ?? "base"];
   }
   return faceForDialog(state.dialog);
 }

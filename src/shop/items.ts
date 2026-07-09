@@ -38,11 +38,14 @@ export const TALK_EXPERIENCE_INDEX = 1;
 /** Index of the "About your education" topic. */
 export const TALK_EDUCATION_INDEX = 2;
 
+/** Index of the "About your ambitions" topic. */
+export const TALK_AMBITIONS_INDEX = 3;
+
 /**
  * Page count per talk topic. Topics with 1 page use a single `text` i18n
  * key; topics with >1 use `pages.<n>` keys instead (see en/ja.ts).
  */
-export const TALK_TOPIC_PAGE_COUNT = [8, 7, 7, 1];
+export const TALK_TOPIC_PAGE_COUNT = [8, 7, 7, 8];
 
 /** Face sprite key shown on each page of the "about yourself" topic. */
 export const TALK_ABOUT_FACES = [
@@ -76,6 +79,18 @@ export const TALK_EDUCATION_FACES = [
   "mlem",
   "base",
   "mlem",
+] as const;
+
+/** Face sprite key shown on each page of the "about your ambitions" topic. */
+export const TALK_AMBITIONS_FACES = [
+  "base",
+  "base",
+  "happy",
+  "neutral",
+  "neutral",
+  "neutral",
+  "neutral",
+  "happy",
 ] as const;
 
 /**
