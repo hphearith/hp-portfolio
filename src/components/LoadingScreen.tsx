@@ -18,13 +18,17 @@ export default function LoadingScreen({ onEnter }: { onEnter: () => void }) {
     if (ready) btnRef.current?.focus();
   }, [ready]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setReady(true), LOAD_DURATION_MS);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="loading-overlay">
       <div className="loading-bar-track">
         <div
           className="loading-bar-fill"
           style={{ animationDuration: `${LOAD_DURATION_MS}ms` }}
-          onAnimationEnd={() => setReady(true)}
         />
       </div>
       {ready && (
